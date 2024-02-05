@@ -6,7 +6,9 @@ import Hero from '../components/Hero.vue'
 
 <template>
   <NavBar />
-  <Hero />
+  <main>
+    <Hero />
+  </main>
   <Footer />
 </template>
 
