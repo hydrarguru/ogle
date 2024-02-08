@@ -7,9 +7,12 @@
     overflow-x: hidden;
 
     font-family: Noto Sans, sans-serif;
-    --background-color: #000000;
-    --secondary-color: #2e2e2e;
+    --background-color: #151515;
+    --secondary-color: #202020;
     --accent: #FFD580;
+
+    --primary-btn: #373737;
+    --primary-btn-hover: #ffffff;
 }
 
 body {
