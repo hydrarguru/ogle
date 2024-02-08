@@ -4,27 +4,53 @@ import { RouterLink } from "vue-router";
 
 <template>
   <nav>
-    <div class="navbar bg-base-100">
-      <div class="flex-1">
-        <RouterLink to="/" class="btn btn-ghost text-xl">ogle</RouterLink>
-      </div>
-      <div class="flex-none">
-        <ul class="menu menu-horizontal px-1">
-          <li><a href="/games">Games</a></li>
-          <li>
-            <details>
-              <summary>Account</summary>
-              <ul class="p-2 bg-base-100 rounded-t-none">
-                <li><a>Profile</a></li>
-                <li><a>Library</a></li>
-                <li><a>Logout</a></li>
-              </ul>
-            </details>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <h1>ogle</h1>
+    <ul>
+      <li>
+        <RouterLink to="/">Home</RouterLink>
+      </li>
+      <li>
+        <RouterLink to="/games">Games</RouterLink>
+      </li>
+      <li>
+        Account
+      </li>
+    </ul>
   </nav>
 </template>
 
-<style scoped></style>
+<style scoped>
+  nav {
+    background-color: #2e2e2e;
+    border-radius: .25rem;
+    border: 1px solid #FFD580;
+    box-shadow: 8px 4px 4px rgba(0, 0, 0, 0.25);
+
+    margin-top: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+  }
+
+  nav h1 {
+    font-size: 2rem;
+    color: #FFD580;
+    margin: 0;
+  }
+
+  ul {
+    display: flex;
+    justify-content: space-evenly;
+    list-style: none;
+  }
+
+  a {
+    color: #ffffff;
+    text-decoration: none;
+  }
+  a:hover {
+    color: #FFD580;
+    text-decoration: underline #FFD580;
+  }
+</style>

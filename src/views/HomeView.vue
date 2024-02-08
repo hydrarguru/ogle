@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import NavBar from '../components/NavBar.vue'
-import Footer from '../components/Footer.vue'
-import Hero from '../components/Hero.vue'
+import NavBar  from "../components/NavBar.vue";
 </script>
 
 <template>
   <NavBar />
   <main>
-    <Hero />
+    <div>
+      <p>Welcome to Oogle, the best place to find games!</p>
+      <p>Click on the Games link to see our selection.</p>
+    </div>
   </main>
-  <Footer />
 </template>
 
-<style scoped></style>
+<style scoped>
+  main {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+</style>
