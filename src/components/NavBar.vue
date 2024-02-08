@@ -24,7 +24,7 @@ import { RouterLink } from "vue-router";
     background-color: #2e2e2e;
     border-radius: .25rem;
     border: 1px solid #FFD580;
-    box-shadow: 8px 4px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 10px 20px 0 rgba(0,0,0,.07);
 
     margin-top: 1rem;
     margin-left: 2rem;
@@ -35,7 +35,6 @@ import { RouterLink } from "vue-router";
 
   nav h1 {
     font-size: 2rem;
-    color: #FFD580;
     margin: 0;
   }
 
