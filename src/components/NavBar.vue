@@ -22,7 +22,7 @@ import { RouterLink } from "vue-router";
 <style scoped>
   nav {
     background-color: #2e2e2e;
-    border-radius: .25rem;
+    border-radius: 12px;
     border: 1px solid #FFD580;
     box-shadow: 0 10px 20px 0 rgba(0,0,0,.07);
 
