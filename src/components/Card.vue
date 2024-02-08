@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
     defineProps({
       title: String,
       description: String,
@@ -19,9 +18,6 @@ import { defineProps } from 'vue'
     <div class="card-body">
       <h2 class="card-title">{{ title }}</h2>
       <p>{{ description }}</p>
-      <div class="card-actions justify-end" v-for="tag in tags">
-        <div class="badge badge-outline">{{ tag }}</div>
-      </div>
     </div>
   </div>
 </template>
