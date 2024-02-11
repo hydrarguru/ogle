@@ -4,52 +4,47 @@ import { RouterLink } from "vue-router";
 
 <template>
   <nav>
-    <h1>ogle</h1>
-    <ul>
-      <li>
+    <div class="navbar">
+      <h1 class="navbar-brand">ogle</h1>
+      <div class="navbar-item">
         <RouterLink to="/">Home</RouterLink>
-      </li>
-      <li>
+      </div>
+      <div class="navbar-item">
         <RouterLink to="/games">Games</RouterLink>
-      </li>
-      <li>
-        Account
-      </li>
-    </ul>
+      </div>
+    </div>
   </nav>
 </template>
 
 <style scoped>
   nav {
-    background-color: #2e2e2e;
-    border-radius: 12px;
-    border: 1px solid #FFD580;
+    background-color: var(--secondary-color);
     box-shadow: 0 10px 20px 0 rgba(0,0,0,.07);
-
-    margin-top: 1rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
+    width: 100%;
     margin-bottom: 2rem;
-    padding: 1rem;
   }
-
-  nav h1 {
-    font-size: 2rem;
-    margin: 0;
-  }
-
-  ul {
+  .navbar {
     display: flex;
-    justify-content: space-evenly;
-    list-style: none;
+    justify-content: flex-start;
+    color: #fff;
+    font-size: 2rem;
   }
-
-  a {
-    color: #ffffff;
+  .navbar-brand {
+    padding-top: 1rem;
+    padding-left: 1rem;
+    margin-right: 1rem;
+  }
+  .navbar-item {
+    color: #fff;
+    font-size: 1.5rem;
+    padding: 2rem;
+  }
+  .navbar-item a {
+    color: #fff;
     text-decoration: none;
   }
-  a:hover {
-    color: #FFD580;
-    text-decoration: underline #FFD580;
+  .navbar-item:hover {
+    background-color: #2a2a2a;
+    transition: all 500ms ease-in-out;
   }
 </style>
