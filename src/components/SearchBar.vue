@@ -1,10 +1,22 @@
 <script lang="ts">
+export default {
+    setup() {
+        return {
+            searchInput: ''
+        }
+    },
+    methods: {
+        searchGames() {
+            alert(this.searchInput);
+        }
+    }
+}
 
 
 </script>
 <template>
     <div>
-        <input type="text" placeholder="Search for games" />
+        <input @keyup.enter="searchGames()" v-model="searchInput" type="text" placeholder="Search for games"/>
     </div>
 </template>
 
@@ -21,6 +33,7 @@
         border: none;
         border-radius: 12px;
     }
+
     input:hover, input:focus {
         background-color: #f2f2f2;
         transition: all 500ms ease-in-out;
