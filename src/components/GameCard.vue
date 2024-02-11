@@ -8,12 +8,18 @@ defineProps({
     gameImage: String,
     gamePrice: String,
     gameRating: String,
-    gameRatings: Array
+    gameGenres: Array
 })
 </script>
 
 <template>
     <div class="card">
+        <div class="card-hover-information">
+            <p>{{ gameDescription }}</p>
+            <p>{{ gamePrice }}</p>
+            <p>{{ gameRating }}</p>
+            <p>{{ gameGenres?.join(', ') }}</p>
+        </div>
         <img :src="gameImage" alt="Game Image" />
         <div class="card-body">
             <RouterLink :to="`/games/${gameId}`"><h2>{{ gameTitle }}</h2></RouterLink>
@@ -30,10 +36,23 @@ defineProps({
 </template>
 
 <style scoped>
+    .card-hover-information {
+        display: block;
+        position: absolute;
+        background-color: var(--secondary-color), 0.5;
+        padding: 1rem;
+        z-index: 1;
+    }
+
+    .card:hover + .card-hover-information {
+        display: block;
+    }
+
     .card {
         background-color: var(--secondary-color);
         box-shadow: 0 10px 20px 0 rgba(0,0,0,.07);
         border-radius: 12px;
+        z-index: 0;
     }
     .card img {
         width: 100%;
@@ -54,6 +73,7 @@ defineProps({
         border: none;
         border-radius: 0.25rem;
         margin: 0 0.25rem;
+        cursor: pointer;
     }
     .card-footer button:hover {
         transition: all 300ms ease-in-out;
