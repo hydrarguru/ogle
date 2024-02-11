@@ -50,7 +50,7 @@ import SearchBar from "../components/SearchBar.vue";
   }
   .games-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 2rem;
     margin-top: 2rem;
   }  
