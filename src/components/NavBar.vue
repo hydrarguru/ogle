@@ -4,7 +4,7 @@ import { RouterLink } from "vue-router";
 
 <template>
   <nav>
-    <div class="navbar">
+  <div class="navbar">
       <h1 class="navbar-brand">ogle</h1>
       <div class="navbar-item">
         <RouterLink to="/">Home</RouterLink>
@@ -12,7 +12,7 @@ import { RouterLink } from "vue-router";
       <div class="navbar-item">
         <RouterLink to="/games">Games</RouterLink>
       </div>
-    </div>
+  </div>
   </nav>
 </template>
 
