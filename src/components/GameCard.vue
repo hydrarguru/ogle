@@ -2,9 +2,10 @@
 import { PlusIcon, HeartIcon } from "@heroicons/vue/24/outline";
 import { RouterLink } from "vue-router";
 defineProps({
-    gameId: Number,
+    gameId: String,
     gameTitle: String,
     gameDescription: String,
+    gameReleaseDate: String,
     gameImage: String,
     gamePrice: String,
     gameRating: String,
@@ -39,9 +40,10 @@ defineProps({
     .card-hover-information {
         display: block;
         position: absolute;
-        background-color: var(--secondary-color), 0.5;
+        background-color: var(--secondary-color);
+        opacity: 0.5;
+        border-radius: 12px;
         padding: 1rem;
-        z-index: 1;
     }
 
     .card:hover + .card-hover-information {
