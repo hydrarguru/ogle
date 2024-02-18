@@ -64,10 +64,12 @@ onMounted(() => {
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin-left: 2rem;
+        margin-right: 2rem;
     }
     .grid-container {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(3, 1fr);
         align-items: flex-start;
         padding-left: 2rem;
         padding-right: 2rem;
@@ -75,7 +77,7 @@ onMounted(() => {
     .container {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
 
         background-color: var(--secondary-color);
         box-shadow: 0 10px 20px 0 rgba(0,0,0,.07);
