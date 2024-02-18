@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import NavBar from '../components/NavBar.vue'
 import router from '../router';
-import { onMounted } from 'vue';
 import { fetchGamesStore } from '../stores/gameStore';
 
 const gameId = router.currentRoute.value.params.id.toString();
@@ -21,10 +20,6 @@ const gameTags = gameDetails.tags.map((tag) => {
     return tag.name;
 }).join(', ');
 
-
-onMounted(() => {
-    
-})
 
 </script>
 
