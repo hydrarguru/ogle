@@ -4,23 +4,12 @@ import { RouterLink } from "vue-router";
 defineProps({
     gameId: String,
     gameTitle: String,
-    gameDescription: String,
-    gameReleaseDate: String,
     gameImage: String,
-    gamePrice: String,
-    gameRating: String,
-    gameGenres: Array
 })
 </script>
 
 <template>
     <div class="card">
-        <div class="card-hover-information">
-            <p>{{ gameDescription }}</p>
-            <p>{{ gamePrice }}</p>
-            <p>{{ gameRating }}</p>
-            <p>{{ gameGenres?.join(', ') }}</p>
-        </div>
         <img :src="gameImage" alt="Game Image" />
         <div class="card-body">
             <RouterLink :to="`/games/${gameId}`"><h2>{{ gameTitle }}</h2></RouterLink>
