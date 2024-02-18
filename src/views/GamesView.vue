@@ -2,41 +2,27 @@
 import NavBar  from "../components/NavBar.vue";
 import GameCard from "../components/GameCard.vue";
 import SearchBar from "../components/SearchBar.vue";
+import { fetchGamesStore } from "../stores/gameStore";
+
+
+const gameStore = fetchGamesStore();
+const gameItems = await gameStore.fetchGames();
 </script>
 
 <template>
   <NavBar />
   <main>
     <SearchBar />
-    <div class="games-container">
-      <GameCard
-        gameTitle="Cyberpunk 2077"
-        gameDescription="Game Description"
+    <!--
+        <GameCard
+        gameId="3498"
+        gameTitle="Grand Theft Auto V"
         gameImage="https://placehold.co/250x350"
-        gamePrice="19.99"
-        gameRating="4.5"
       />
-      <GameCard
-        gameTitle="Hogwarts Legacy"
-        gameDescription="Game Description"
-        gameImage="https://placehold.co/250x350"
-        gamePrice="19.99"
-        gameRating="4.5"
-      />
-      <GameCard
-        gameTitle="Elden Ring"
-        gameDescription="Game Description"
-        gameImage="https://placehold.co/250x350"
-        gamePrice="19.99"
-        gameRating="4.5"
-      />
-      <GameCard
-        gameTitle="Cyberpunk 2077"
-        gameDescription="Game Description"
-        gameImage="https://placehold.co/250x350"
-        gamePrice="19.99"
-        gameRating="4.5"
-      />
+    -->
+    <div class="games-container" v-for="game in gameItems" :key="game">
+      <GameCard :gameId="game.id" :gameTitle="game.name" :gameImage="`https://placehold.co/250x350`" />
+
     </div>
   </main>
 </template>
@@ -49,9 +35,8 @@ import SearchBar from "../components/SearchBar.vue";
     flex-direction: column;
   }
   .games-container {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 2rem;
+    display: flex;
+    align-items: flex-start;
     margin-top: 2rem;
   }  
 </style>
