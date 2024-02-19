@@ -26,19 +26,6 @@ defineProps({
 </template>
 
 <style scoped>
-    .card-hover-information {
-        display: block;
-        position: absolute;
-        background-color: var(--secondary-color);
-        opacity: 0.5;
-        border-radius: 12px;
-        padding: 1rem;
-    }
-
-    .card:hover + .card-hover-information {
-        display: block;
-    }
-
     .card {
         background-color: var(--secondary-color);
         box-shadow: 0 10px 20px 0 rgba(0,0,0,.07);
