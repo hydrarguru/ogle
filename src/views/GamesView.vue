@@ -34,7 +34,9 @@ const gameItems = await gameStore.fetchGames();
     flex-direction: column;
   }
   .games-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
     align-items: flex-start;
     margin-top: 2rem;
   }  
