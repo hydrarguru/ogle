@@ -20,9 +20,10 @@ const gameItems = await gameStore.fetchGames();
         gameImage="https://placehold.co/250x350"
       />
     -->
-    <div class="games-container" v-for="game in gameItems" :key="game">
-      <GameCard :gameId="game.id" :gameTitle="game.name" :gameImage="`https://placehold.co/250x350`" />
-
+    <div class="games-container">
+      <div v-for="game in gameItems" :key="game">
+        <GameCard :gameId="game.id" :gameTitle="game.name" :gameImage="`https://placehold.co/250x350`" />
+      </div>
     </div>
   </main>
 </template>
