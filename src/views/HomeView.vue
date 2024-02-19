@@ -15,6 +15,7 @@
   main {
     margin-left: 2rem;
     margin-right: 2rem;
+    margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
   }
