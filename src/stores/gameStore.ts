@@ -2,11 +2,13 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const fetchGamesStore = defineStore('fetchGameStore', () => {
-    const gamesList = ref([])
+    const isLoading = ref(false)
 
     async function fetchGames(page: number = 1, pageSize: number = 10) {
+        isLoading.value = true;
         const response = await fetch(`https://api.rawg.io/api/games?key=${import.meta.env.VITE_API_KEY}&page=${page}&page_size=${pageSize}`);
         const data = await response.json();
+        isLoading.value = false;
         return data.results;
     }
 
@@ -16,5 +18,5 @@ export const fetchGamesStore = defineStore('fetchGameStore', () => {
         return data;
     }
 
-    return { gamesList, fetchGames, fetchGameDetails }
+    return { isLoading, fetchGames, fetchGameDetails }
 })
