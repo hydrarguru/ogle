@@ -11,14 +11,7 @@ const gameItems = await gameStore.fetchGames(1, 25);
 
 <template>
   <main>
-    <SearchBar />
-    <!--
-        <GameCard
-        gameId="3498"
-        gameTitle="Grand Theft Auto V"
-        gameImage="https://placehold.co/250x350"
-      />
-    -->
+    <SearchBar :gameArray="gameItems"/>
     <div v-if="gameStore.isLoading">
       <p>Loading...</p>
     </div>
@@ -42,7 +35,6 @@ const gameItems = await gameStore.fetchGames(1, 25);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
-    align-items: flex-start;
     margin-top: 2rem;
   }  
 </style>
