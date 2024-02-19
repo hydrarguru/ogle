@@ -2,7 +2,7 @@
 import { PlusIcon, HeartIcon } from "@heroicons/vue/24/outline";
 import { RouterLink } from "vue-router";
 defineProps({
-    gameId: String,
+    gameId: Number,
     gameTitle: String,
     gameImage: String,
 })
