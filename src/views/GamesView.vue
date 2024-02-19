@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NavBar  from "../components/NavBar.vue";
 import GameCard from "../components/GameCard.vue";
 import SearchBar from "../components/SearchBar.vue";
 import { fetchGamesStore } from "../stores/gameStore";
@@ -10,7 +9,6 @@ const gameItems = await gameStore.fetchGames();
 </script>
 
 <template>
-  <NavBar />
   <main>
     <SearchBar />
     <!--
@@ -22,7 +20,7 @@ const gameItems = await gameStore.fetchGames();
     -->
     <div class="games-container">
       <div v-for="game in gameItems" :key="game">
-        <GameCard :gameId="game.id" :gameTitle="game.name" :gameImage="`https://placehold.co/250x350`" />
+        <GameCard :gameId="game.id" :gameTitle="game.name" :gameImage="game.background_image" />
       </div>
     </div>
   </main>

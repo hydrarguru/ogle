@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import NavBar  from "../components/NavBar.vue";
+
 </script>
 
 <template>
-  <NavBar />
   <main>
     <div>
       <p>Welcome to Oogle, the best place to find games!</p>

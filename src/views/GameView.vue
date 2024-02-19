@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NavBar from '../components/NavBar.vue'
 import router from '../router';
 import { fetchGamesStore } from '../stores/gameStore';
 
@@ -24,7 +23,6 @@ const gameTags = gameDetails.tags.map((tag) => {
 </script>
 
 <template>
-    <NavBar />
     <main>
         <section class="container">
             <h1>{{ gameDetails.name }}</h1>
