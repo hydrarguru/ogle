@@ -7,7 +7,7 @@ import HeroSection from '../components/HeroSection.vue'
   <main>
     <HeroSection
       backgroundColor="#151515" 
-      elementAlignment="flex-start"
+      elementAlignment="center"
       sectionTitle="Extensive library of games to browse."
       sectionText="Browse our extensive library of 500,000+ games to find your next game."
     />
@@ -19,7 +19,7 @@ import HeroSection from '../components/HeroSection.vue'
     />
     <HeroSection
       backgroundColor="#151515"
-      elementAlignment="flex-end"
+      elementAlignment="center"
       sectionTitle="Accounts & Community"
       sectionText="Create an account to join our community and start sharing your collections."
     />
