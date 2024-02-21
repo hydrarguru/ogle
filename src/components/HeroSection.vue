@@ -33,14 +33,19 @@ defineProps({
 <style scoped>
     .hero-container {
         display: flex;
+        justify-content: space-between;
     }
-
     .hero-text-container {
         text-align: center;
         padding: 2rem;
+        margin-left: 10rem;
     }
-
     .hero-container h1 p {
         color: #ffffff;
+    }
+    .hero-container aside {
+        padding: 2rem;
+        margin-right: 10rem;
+        align-self: flex-end;
     }
 </style>
