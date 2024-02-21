@@ -26,6 +26,7 @@ const gameItems = await gameStore.fetchGames(1, 25);
 
 <style scoped>
   main {
+    margin-top: 2rem;
     margin-left: 2rem;
     margin-right: 2rem;
     display: flex;
