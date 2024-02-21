@@ -21,7 +21,6 @@ import { RouterLink } from "vue-router";
     background-color: var(--secondary-color);
     box-shadow: 0 10px 20px 0 rgba(0,0,0,.07);
     width: 100%;
-    margin-bottom: 2rem;
   }
   .navbar {
     display: flex;
