@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import GameCard from "../components/GameCard.vue";
-import PaginationComponent from "../components/PaginationComponent.vue";
 import SearchBar from "../components/SearchBar.vue";
 import { fetchGamesStore } from "../stores/gameStore";
 
@@ -13,14 +12,13 @@ const gameItems = await gameStore.fetchGames(1, 25);
   <main>
     <SearchBar :gameArray="gameItems"/>
     <div v-if="gameStore.isLoading">
-      <p>Loading...</p>
+      <h1>Loading...</h1>
     </div>
     <div class="games-container" v-else>
       <div v-for="game in gameItems" :key="game">
         <GameCard :gameId="game.id" :gameTitle="game.name" :gameImage="game.background_image" />
       </div>
     </div>
-    <PaginationComponent :totalPages="10" />
   </main>
 </template>
 
@@ -37,5 +35,5 @@ const gameItems = await gameStore.fetchGames(1, 25);
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
     margin-top: 2rem;
-  }  
+  }
 </style>
