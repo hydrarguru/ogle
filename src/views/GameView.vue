@@ -41,12 +41,18 @@ const gameTags = gameDetails.tags.map((tag) => {
                     <li>Tags: {{ gameTags }}</li>
                 </ol>
             </section>
+
             <section class="container">
                 <h1>Game Ratings</h1>
                 <ol>
                     <li>Metacritic: {{ gameDetails.metacritic }}</li>
                     <li>Community Rating: {{ gameDetails.rating }}/5</li>
                 </ol>
+            </section>
+
+            <section class="container">
+                <h1>Game Description</h1>
+                <p>{{ gameDetails.description_raw }}</p>
             </section>
         </div>
     </main>
@@ -60,18 +66,28 @@ const gameTags = gameDetails.tags.map((tag) => {
         margin-left: 2rem;
         margin-right: 2rem;
     }
+
+    @media screen and (min-width: 600px){
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
     .grid-container {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
         align-items: flex-start;
-        padding-left: 2rem;
-        padding-right: 2rem;
+        margin-right: 2rem;
+        margin-left: 2rem;
     }
     .container {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-
+        width: 100%;
         background-color: var(--secondary-color);
         box-shadow: 0 10px 20px 0 rgba(0,0,0,.07);
         border-radius: 6px;
