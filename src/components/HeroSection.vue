@@ -6,6 +6,10 @@ defineProps({
     elementAlignment: {
         type: String
     },
+    sectionImage: {
+        type: String,
+        default: 'https://placehold.co/600x400'
+    },
     sectionTitle: {
         type: String,
         default: 'Section Title'
@@ -25,7 +29,7 @@ defineProps({
             <p>{{ sectionText }}</p>
         </div>
         <aside>
-            <img src="https://placehold.co/600x400" alt="Placeholder image" />
+            <img :src="sectionImage" alt="Section image" />
         </aside>
     </section>
 </template>
