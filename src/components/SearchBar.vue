@@ -27,7 +27,7 @@ export default {
     <div class="wrapper">
         <input v-model="searchInput" type="text" placeholder="Search for games"/>
         <button @click="searchGames()">
-            <MagnifyingGlassIcon class="icon"></MagnifyingGlassIcon>
+            Search
         </button>
     </div>
 </template>
