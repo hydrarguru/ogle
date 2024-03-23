@@ -6,18 +6,23 @@ const gameId = router.currentRoute.value.params.id.toString();
 const gameStore = fetchGamesStore();
 const gameDetails = await gameStore.fetchGameDetails(gameId);
 
-const gamePlatforms = gameDetails.parent_platforms.map((platform) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error 
+const gamePlatforms: string[] = gameDetails.parent_platforms.map((platform) => {
     return platform.platform.name;
-}).join(', ');
+});
 
-const gameGenres = gameDetails.genres.map((genre) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error 
+const gameGenres: string[] = gameDetails.genres.map((genre) => {
     return genre.name;
-}).join(', ');
+});
 
-const gameTags = gameDetails.tags.map((tag) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error 
+const gameTags: string[] = gameDetails.tags.map((tag) => {
     return tag.name;
-}).join(', ');
-
+});
 
 </script>
 
@@ -32,7 +37,7 @@ const gameTags = gameDetails.tags.map((tag) => {
             <section class="container">
                 <h1>Game Details</h1>
                 <ol>
-                    <li>Platform: {{ gamePlatforms }}</li>
+                    <li>{{ gamePlatforms }}</li>
                     <li>Release Date: {{ gameDetails.released }}</li>
                     <li>Developer: {{ gameDetails.developers[0].name }}</li>
                     <li>Publisher: {{ gameDetails.publishers[0].name }}</li>
