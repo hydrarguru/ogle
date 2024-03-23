@@ -7,12 +7,6 @@ export default {
         };
     },
     methods: {
-        searchGames() {
-            let modifiedArray = this.gameArray;
-            modifiedArray = modifiedArray.filter((game: any) => {
-                return game.name.toLowerCase().includes(this.searchInput.toLowerCase());
-            });
-        }
     },
     props: {
         gameArray: Array
@@ -25,9 +19,7 @@ export default {
 <template>
     <div class="wrapper">
         <input v-model="searchInput" type="text" placeholder="Search for games"/>
-        <button @click="searchGames()">
-            Search
-        </button>
+        <button>Search</button>
     </div>
 </template>
 
