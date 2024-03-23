@@ -1,5 +1,4 @@
 <script lang="ts">
-import { MagnifyingGlassIcon } from "@heroicons/vue/24/outline";
 
 export default {
     setup() {
