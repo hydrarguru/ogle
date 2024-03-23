@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import GameCard from "../components/GameCard.vue";
-import SearchBar from "../components/SearchBar.vue";
 import { fetchGamesStore } from "../stores/gameStore";
 
 
@@ -10,7 +9,6 @@ const gameItems = await gameStore.fetchGames(1, 25);
 
 <template>
   <main>
-    <SearchBar :gameArray="gameItems"/>
     <div v-if="gameStore.isLoading">
       <h1>Loading...</h1>
     </div>
