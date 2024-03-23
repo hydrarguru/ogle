@@ -5,7 +5,6 @@ import { fetchGamesStore } from '../stores/gameStore';
 const gameId = router.currentRoute.value.params.id.toString();
 const gameStore = fetchGamesStore();
 const gameDetails = await gameStore.fetchGameDetails(gameId);
-console.log(gameDetails);
 
 const gamePlatforms = gameDetails.parent_platforms.map((platform) => {
     return platform.platform.name;
