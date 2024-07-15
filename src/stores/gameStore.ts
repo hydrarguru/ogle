@@ -6,7 +6,6 @@ export const fetchGamesStore = defineStore('fetchGameStore', () => {
 
     async function fetchGames(page: number = 1, pageSize: number = 10) {
         isLoading.value = true;
-        console.log(isLoading.value)
         try {
             const response = await fetch(`https://api.rawg.io/api/games?key=${import.meta.env.VITE_API_KEY}&page=${page}&page_size=${pageSize}`);
             const data = await response.json();
@@ -14,7 +13,6 @@ export const fetchGamesStore = defineStore('fetchGameStore', () => {
         }
         finally {
             isLoading.value = false;
-            console.log(isLoading.value)
         }
     }
 
