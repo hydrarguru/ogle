@@ -1,11 +1,6 @@
 # OGLe (Online Game Library)
 An online video game library that consumes RAWG API to display information about games. 
 
-## TODO:
-- [ ] Home Page redesign.
-- [ ] Search bar functionality.
-- [ ] Cache API calls.
-
 ## Project Setup
 
 ```sh
