@@ -9,11 +9,11 @@ const gameItems = await gameStore.fetchGames(1, 25);
 
 <template>
   <main>
-    <div class="games-container">
-      <div v-for="game in gameItems" :key="game">
+    <section class="games-container">
+      <article v-for="game in gameItems" :key="game">
         <GameCard :gameId="game.id" :gameTitle="game.name" :gameImage="game.background_image" />
-      </div>
-    </div>
+      </article>
+    </section>
   </main>
 </template>
 
@@ -26,9 +26,11 @@ const gameItems = await gameStore.fetchGames(1, 25);
     flex-direction: column;
   }
   .games-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
     margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: 1fr;
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
   }
 </style>
