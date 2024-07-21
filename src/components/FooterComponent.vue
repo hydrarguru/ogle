@@ -1,7 +1,7 @@
 <template>
     <footer>
         <p>
-            2024 &copy; Oogle. All rights reserved.
+            2024 &copy; ogle. All rights reserved.
             Data & Images provided by: <a href="https://rawg.io/">RAWG</a>
         </p>
     </footer>
