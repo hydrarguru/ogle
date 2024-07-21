@@ -2,17 +2,14 @@
 import GameCard from "../components/GameCard.vue";
 import { fetchGamesStore } from "../stores/gameStore";
 
-
 const gameStore = fetchGamesStore();
 const gameItems = await gameStore.fetchGames(1, 25);
 </script>
 
+
 <template>
   <main>
-    <div v-if="gameStore.isLoading">
-      <h1>Loading...</h1>
-    </div>
-    <div class="games-container" v-else>
+    <div class="games-container">
       <div v-for="game in gameItems" :key="game">
         <GameCard :gameId="game.id" :gameTitle="game.name" :gameImage="game.background_image" />
       </div>
