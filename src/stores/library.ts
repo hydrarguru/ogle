@@ -102,5 +102,33 @@ export const useLibraryStore = defineStore('library', () => {
     if (entries.value[gameId]) await commit(gameId, undefined)
   }
 
-  return { entries, loaded, error, list, count, countsByStatus, stats, get, load, add, update, remove }
+  /**
+   * Merges imported entries into the library. For games that already exist the
+   * most recently updated version wins, so importing never loses newer local edits.
+   */
+  async function importEntries(incoming: LibraryEntry[]) {
+    const result = { added: 0, updated: 0, kept: 0 }
+    const repository = getLibraryRepository()
+    try {
+      for (const entry of incoming) {
+        const current = entries.value[entry.id]
+        if (current && current.updatedAt >= entry.updatedAt) {
+          result.kept++
+          continue
+        }
+        await repository.save(entry)
+        entries.value[entry.id] = entry
+        if (current) result.updated++
+        else result.added++
+      }
+      error.value = null
+    } catch (e) {
+      error.value = 'Import failed part-way. Is browser storage full or disabled?'
+      console.error(e)
+      await load()
+    }
+    return result
+  }
+
+  return { entries, loaded, error, list, count, countsByStatus, stats, get, load, add, update, remove, importEntries }
 })

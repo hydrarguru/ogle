@@ -72,4 +72,22 @@ describe('library store', () => {
     expect(store.get(1)).toBeUndefined()
     expect(store.error).toMatch(/Could not save/)
   })
+
+  it('merges imports, keeping the newer copy of existing games', async () => {
+    const store = useLibraryStore()
+    await store.add(game(1), 'playing')
+    await store.add(game(2), 'backlog')
+    const local1 = store.get(1)!
+    const local2 = store.get(2)!
+    const older = { ...local1, status: 'dropped' as const, updatedAt: '2000-01-01T00:00:00.000Z' }
+    const newer = { ...local2, status: 'completed' as const, updatedAt: '2999-01-01T00:00:00.000Z' }
+    const fresh = { ...local1, id: 3, name: 'Game 3' }
+
+    const result = await store.importEntries([older, newer, fresh])
+    expect(result).toEqual({ added: 1, updated: 1, kept: 1 })
+    expect(store.get(1)?.status).toBe('playing')
+    expect(store.get(2)?.status).toBe('completed')
+    expect(store.get(3)?.name).toBe('Game 3')
+    expect((await new LocalStorageLibraryRepository(localStorage, 'test').list()).length).toBe(3)
+  })
 })

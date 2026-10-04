@@ -27,6 +27,9 @@ pnpm dev
 - **Personal library** with status (playing / backlog / wishlist / completed / dropped), 1-5 star rating,
   hours played and notes. Add from any card or the detail page.
 - **Library page** with stats, status tabs, filtering and sorting.
+- **Export / import** the library as JSON (backup, or move between browsers). Importing merges: for games you
+  already have, the most recently updated copy wins, so it never overwrites newer local edits. Invalid records
+  in a file are skipped and counted.
 
 ## Architecture
 

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import GameCard from '@/components/GameCard.vue'
+import LibraryTransfer from '@/components/LibraryTransfer.vue'
 import SearchField from '@/components/SearchField.vue'
 import StarRating from '@/components/StarRating.vue'
 import StateMessage from '@/components/StateMessage.vue'
@@ -57,7 +58,10 @@ const stats = computed(() => [
 
 <template>
   <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-    <h1 class="mb-6 text-3xl font-extrabold tracking-tight">My library</h1>
+    <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+      <h1 class="text-3xl font-extrabold tracking-tight">My library</h1>
+      <LibraryTransfer :can-export="library.count > 0" />
+    </div>
 
     <p v-if="library.error" class="mb-4 rounded-lg bg-status-dropped/10 px-4 py-3 text-sm text-status-dropped" role="alert">
       {{ library.error }}
@@ -70,6 +74,7 @@ const stats = computed(() => [
     >
       <RouterLink to="/games" class="btn btn-primary">Browse games</RouterLink>
     </StateMessage>
+
 
     <template v-else>
       <dl class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
