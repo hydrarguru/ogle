@@ -27,11 +27,42 @@ export function normalizeTitle(name: string): string {
     .trim()
 }
 
-/** The RAWG result whose title equals the Steam title, or undefined. Close-but-different titles are not guessed. */
+const ROMAN: Record<string, string> = { ii: '2', iii: '3', iv: '4', v: '5', vi: '6', vii: '7', viii: '8', ix: '9', x: '10' }
+
+/** "Edition" style suffixes that Steam and RAWG add or drop inconsistently. */
+const EDITION_NOISE = [
+  /\b(?:(?:game of the year|goty|definitive|complete|ultimate|deluxe|enhanced|special|anniversary|collector s|gold|standard|legendary|premium|directors?|director s)\s+)?(?:edition|collection|version|cut)\b/g,
+  /\b(?:game of the year|goty|definitive|remastered|remaster|redux|hd|enhanced)\b/g,
+]
+
+/**
+ * A looser key for comparing titles: ignores "(2016)" style tags, edition suffixes, a leading "The",
+ * and writes roman numerals (after the first word) as digits, so "Final Fantasy VII" equals "final fantasy 7".
+ * Subtitles are kept, so "Batman" never equals "Batman: Arkham City".
+ */
+export function coreTitle(name: string): string {
+  let text = normalizeTitle(name.replace(/\([^)]*\)|\[[^\]]*\]/g, ' '))
+  for (const noise of EDITION_NOISE) text = text.replace(noise, ' ')
+  return text
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word, i) => (i > 0 ? (ROMAN[word] ?? word) : word))
+    .filter((word, i) => !(i === 0 && word === 'the'))
+    .join(' ')
+}
+
+/**
+ * The RAWG result that is the same game as the Steam one, or undefined. An identical title wins; otherwise a
+ * title that is identical once editions, year tags and roman numerals are ignored. Anything vaguer is not guessed.
+ */
 export function pickMatch(game: SteamGame, candidates: GameSummary[]): GameSummary | undefined {
-  const wanted = normalizeTitle(game.name)
-  if (!wanted) return undefined
-  return candidates.find((c) => normalizeTitle(c.name) === wanted)
+  const exact = normalizeTitle(game.name)
+  if (!exact) return undefined
+  const byExact = candidates.find((c) => normalizeTitle(c.name) === exact)
+  if (byExact) return byExact
+  const core = coreTitle(game.name)
+  if (!core) return undefined
+  return candidates.find((c) => coreTitle(c.name) === core)
 }
 
 const roundHours = (minutes: number) => Math.round((minutes / 60) * 10) / 10

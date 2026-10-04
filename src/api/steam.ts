@@ -1,5 +1,5 @@
 import { listGames } from './rawg'
-import { pickMatch, type SteamGame, type SteamMatch } from '@/utils/steamImport'
+import { coreTitle, pickMatch, type SteamGame, type SteamMatch } from '@/utils/steamImport'
 
 const ENDPOINT = '/.netlify/functions/steam-library'
 const RAWG_STEAM_STORE = '1'
@@ -50,7 +50,21 @@ export interface MatchResult {
   failed: SteamGame[]
 }
 
-/** Finds the RAWG game for each Steam game by exact (normalised) title among RAWG's Steam-listed games. */
+/**
+ * Searches to try for a game, cheapest first: the title among RAWG's Steam-listed games, the title with
+ * editions and year tags stripped, then the title across all of RAWG (for games RAWG has no Steam link for).
+ */
+function searchesFor(game: SteamGame): { search: string; stores?: string }[] {
+  const plain = coreTitle(game.name)
+  const attempts = [
+    { search: game.name, stores: RAWG_STEAM_STORE },
+    ...(plain && plain !== game.name.toLowerCase() ? [{ search: plain, stores: RAWG_STEAM_STORE }] : []),
+    { search: game.name },
+  ]
+  return attempts
+}
+
+/** Finds the RAWG game for each Steam game by title, trying looser searches for the ones that are not found. */
 export async function matchSteamGames(
   games: SteamGame[],
   onProgress?: (progress: MatchProgress) => void,
@@ -65,8 +79,12 @@ export async function matchSteamGames(
       signal?.throwIfAborted()
       const game = games[next++]
       try {
-        const page = await listGames({ search: game.name, pageSize: 5, stores: RAWG_STEAM_STORE }, signal)
-        const rawg = pickMatch(game, page.results)
+        let rawg
+        for (const attempt of searchesFor(game)) {
+          const page = await listGames({ ...attempt, pageSize: 8 }, signal)
+          rawg = pickMatch(game, page.results)
+          if (rawg) break
+        }
         if (rawg) result.matches.push({ game, rawg })
         else result.unmatched.push(game)
       } catch (e) {

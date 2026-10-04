@@ -3,7 +3,9 @@ import { computed, ref } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/16/solid'
 import { fetchSteamLibrary, matchSteamGames, type MatchResult } from '@/api/steam'
 import { useLibraryStore } from '@/stores/library'
-import { buildSteamEntries, listSkipped, type SteamImportPlan } from '@/utils/steamImport'
+import SteamManualMatchRow from './SteamManualMatchRow.vue'
+import type { GameSummary } from '@/types/rawg'
+import { buildSteamEntries, listSkipped, type SteamImportPlan, type SteamMatch } from '@/utils/steamImport'
 import { parseSteamProfile } from '@/utils/steamProfile'
 
 export interface SteamImportSubmission {
@@ -22,6 +24,9 @@ const phase = ref<'idle' | 'fetching' | 'matching' | 'ready'>('idle')
 const progress = ref({ done: 0, total: 0 })
 const error = ref<string | null>(null)
 const result = ref<MatchResult | null>(null)
+/** Games the user matched by hand, by Steam app id; only filled after they ask to add games manually. */
+const manual = ref<Record<number, GameSummary>>({})
+const manualOpen = ref(false)
 let controller: AbortController | null = null
 
 function cancel() {
@@ -33,6 +38,8 @@ function reset() {
   phase.value = 'idle'
   error.value = null
   result.value = null
+  manual.value = {}
+  manualOpen.value = false
   progress.value = { done: 0, total: 0 }
 }
 function show() {
@@ -47,8 +54,15 @@ defineExpose({ show })
 
 const valid = computed(() => parseSteamProfile(profile.value) !== null)
 const busy = computed(() => phase.value === 'fetching' || phase.value === 'matching')
-const plan = computed(() => (result.value ? buildSteamEntries(result.value.matches, library.get) : null))
-const unmatchedList = computed(() => listSkipped(result.value?.unmatched ?? []))
+const allMatches = computed<SteamMatch[]>(() => {
+  if (!result.value) return []
+  const byHand = result.value.unmatched.flatMap((game) => (manual.value[game.appId] ? [{ game, rawg: manual.value[game.appId] }] : []))
+  return [...result.value.matches, ...byHand]
+})
+const remaining = computed(() => (result.value?.unmatched ?? []).filter((g) => !manual.value[g.appId]))
+const plan = computed(() => (result.value ? buildSteamEntries(allMatches.value, library.get) : null))
+const unmatchedList = computed(() => listSkipped(remaining.value))
+const manualList = computed(() => listSkipped(result.value?.unmatched ?? []))
 const failedList = computed(() => listSkipped(result.value?.failed ?? []))
 const plural = (n: number, one = 'game') => `${n} ${one}${n === 1 ? '' : 's'}`
 
@@ -81,7 +95,7 @@ async function load() {
 
 function submit() {
   if (!plan.value?.entries.length || !result.value) return
-  emit('submit', { plan: plan.value, unmatched: result.value.unmatched.length, failed: result.value.failed.length })
+  emit('submit', { plan: plan.value, unmatched: remaining.value.length, failed: result.value.failed.length })
   close()
 }
 </script>
@@ -144,7 +158,20 @@ function submit() {
             Ready to import: {{ plural(plan.added) }} new<template v-if="plan.updated">, hours updated on {{ plural(plan.updated) }}</template>.
           </template>
           <template v-else>Nothing to import: your library already has these games and hours.</template>
-          <details v-if="unmatchedList.length" class="text-status-wishlist" data-testid="steam-unmatched">
+          <template v-if="manualOpen">
+            <p class="text-status-wishlist">Pick the right RAWG game for each one you want to import.</p>
+            <ul class="mt-1 max-h-72 space-y-1 overflow-y-auto text-slate-100" data-testid="steam-manual-list">
+              <SteamManualMatchRow
+                v-for="g in manualList"
+                :key="g.appId"
+                :game="g"
+                :picked="manual[g.appId]"
+                @pick="manual[g.appId] = $event"
+                @clear="delete manual[g.appId]"
+              />
+            </ul>
+          </template>
+          <details v-else-if="unmatchedList.length" class="text-status-wishlist" data-testid="steam-unmatched">
             <summary class="cursor-pointer">
               {{ plural(unmatchedList.length) }} could not be matched to a RAWG game and will be skipped.
             </summary>
@@ -155,6 +182,15 @@ function submit() {
               </li>
             </ul>
           </details>
+          <button
+            v-if="!manualOpen && result.unmatched.length"
+            type="button"
+            class="mt-2 text-xs underline text-slate-100 hover:text-white"
+            data-testid="steam-manual-open"
+            @click="manualOpen = true"
+          >
+            I would like to manually add games.
+          </button>
           <details v-if="failedList.length" class="text-status-wishlist" data-testid="steam-failed">
             <summary class="cursor-pointer">
               {{ plural(failedList.length) }} could not be looked up (RAWG error); try again later.
