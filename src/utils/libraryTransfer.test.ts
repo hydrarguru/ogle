@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { exportFilename, ImportError, parseLibraryExport, serializeLibrary } from './libraryTransfer'
+import {
+  EXAMPLE_JSON,
+  exportFilename,
+  FORMAT_FIELDS,
+  ImportError,
+  normalizeEntry,
+  parseLibraryExport,
+  serializeLibrary,
+} from './libraryTransfer'
 import type { LibraryEntry } from '@/types/library'
 
 const entry: LibraryEntry = {
@@ -44,5 +52,35 @@ describe('library export/import', () => {
   it('keeps the last duplicate id', () => {
     const file = JSON.stringify({ format: 'ogle-library', version: 1, entries: [entry, { ...entry, notes: 'later' }] })
     expect(parseLibraryExport(file).entries).toMatchObject([{ notes: 'later' }])
+  })
+
+  it('explains pasted JSON that does not parse', () => {
+    expect(() => parseLibraryExport('{"format": ')).toThrow(/not valid JSON \(/)
+  })
+})
+
+describe('format documentation', () => {
+  it('has an example that imports cleanly', () => {
+    const { entries, skipped } = parseLibraryExport(EXAMPLE_JSON)
+    expect(skipped).toBe(0)
+    expect(entries.map((e) => e.name)).toEqual(['Portal 2', 'The Witcher 3: Wild Hunt'])
+    // The minimal entry only has the required fields; everything else gets defaults.
+    expect(entries[1]).toMatchObject({ rating: null, hoursPlayed: 0, notes: '', genres: [], image: null })
+  })
+
+  it('documents exactly the fields an entry has', () => {
+    const full = JSON.parse(EXAMPLE_JSON).entries[0]
+    const normalized = normalizeEntry(full, '2025-01-01T00:00:00.000Z')!
+    expect(FORMAT_FIELDS.map((f) => f.name).sort()).toEqual(Object.keys(normalized).sort())
+  })
+
+  it('marks as required exactly the fields whose absence makes an entry invalid', () => {
+    const full = JSON.parse(EXAMPLE_JSON).entries[0]
+    for (const field of FORMAT_FIELDS) {
+      const { [field.name]: _omitted, ...without } = full
+      void _omitted
+      const accepted = normalizeEntry(without, '2025-01-01T00:00:00.000Z') !== null
+      expect(accepted, field.name).toBe(!field.required)
+    }
   })
 })

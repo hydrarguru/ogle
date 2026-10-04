@@ -58,15 +58,18 @@ export function parseLibraryExport(text: string, now = new Date().toISOString())
   let data: unknown
   try {
     data = JSON.parse(text)
-  } catch {
-    throw new ImportError('That file is not valid JSON.')
+  } catch (e) {
+    const detail = e instanceof Error ? ` (${e.message})` : ''
+    throw new ImportError(`This is not valid JSON${detail}.`)
   }
   const file = data as { format?: unknown; version?: unknown; entries?: unknown }
   if (!file || file.format !== EXPORT_FORMAT || !Array.isArray(file.entries)) {
-    throw new ImportError('That file is not an OGLe library export.')
+    throw new ImportError(
+      'This is not an OGLe library export: expected an object with "format": "ogle-library" and an "entries" array.',
+    )
   }
   if (typeof file.version !== 'number' || file.version > EXPORT_VERSION) {
-    throw new ImportError('That export was made by a newer version of OGLe.')
+    throw new ImportError('This export was made by a newer version of OGLe.')
   }
   // Last occurrence of a duplicate id wins.
   const byId = new Map<number, LibraryEntry>()
@@ -78,3 +81,56 @@ export function parseLibraryExport(text: string, now = new Date().toISOString())
   }
   return { entries: [...byId.values()], skipped }
 }
+
+export interface FormatField {
+  name: string
+  type: string
+  required: boolean
+  note: string
+}
+
+/** Human-readable description of one library entry; kept in sync with `normalizeEntry` by tests. */
+export const FORMAT_FIELDS: FormatField[] = [
+  { name: 'id', type: 'number', required: true, note: 'RAWG game id: the number in a game page URL, e.g. /games/3498.' },
+  { name: 'name', type: 'string', required: true, note: 'Game title.' },
+  { name: 'status', type: 'string', required: true, note: `One of: ${LIBRARY_STATUSES.join(', ')}.` },
+  { name: 'rating', type: 'number | null', required: false, note: 'Your rating from 1 to 5. Leave out for unrated.' },
+  { name: 'hoursPlayed', type: 'number', required: false, note: 'Hours played, 0 to 99999. Defaults to 0.' },
+  { name: 'notes', type: 'string', required: false, note: 'Up to 2000 characters.' },
+  { name: 'image', type: 'string | null', required: false, note: 'Cover image URL (http or https).' },
+  { name: 'released', type: 'string | null', required: false, note: 'Release date as YYYY-MM-DD.' },
+  { name: 'genres', type: 'string[]', required: false, note: 'Genre names.' },
+  { name: 'addedAt', type: 'string', required: false, note: 'ISO date-time. Defaults to now.' },
+  {
+    name: 'updatedAt',
+    type: 'string',
+    required: false,
+    note: 'ISO date-time. Defaults to addedAt. If you already have the game, the newer copy wins.',
+  },
+]
+
+/** A complete entry followed by one that only has the required fields. */
+export const EXAMPLE_JSON = JSON.stringify(
+  {
+    format: EXPORT_FORMAT,
+    version: EXPORT_VERSION,
+    entries: [
+      {
+        id: 4200,
+        name: 'Portal 2',
+        status: 'completed',
+        rating: 5,
+        hoursPlayed: 9.5,
+        notes: 'Co-op was great.',
+        image: 'https://media.rawg.io/media/games/328/3283617cb7d75d67257fc58339188742.jpg',
+        released: '2011-04-18',
+        genres: ['Puzzle', 'Action'],
+        addedAt: '2024-01-15T18:30:00.000Z',
+        updatedAt: '2024-02-01T20:00:00.000Z',
+      },
+      { id: 3328, name: 'The Witcher 3: Wild Hunt', status: 'backlog' },
+    ],
+  },
+  null,
+  2,
+)
