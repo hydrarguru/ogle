@@ -43,6 +43,22 @@ src/
   views/        Route-level pages (lazy loaded)
 ```
 
+### API caching
+
+RAWG's free tier is rate limited, so responses are cached (`src/api/cache.ts`, used by `src/api/rawg.ts`):
+
+- **Two tiers**: an in-memory map in front of the browser Cache API, so the cache survives page reloads. The Cache
+  API is used instead of localStorage so it can never use up the quota the personal library depends on.
+- **Per-endpoint lifetimes**: game lists 15 minutes, game details and screenshots 1 day, genres 7 days.
+- **Shared requests**: identical concurrent requests are sent once.
+- **Stale-if-error**: if RAWG is unreachable, rate limited (429) or failing (5xx), an expired copy is served
+  instead of an error. A 404 is never masked.
+- **Housekeeping**: entries older than 7 days are deleted, and the store is capped at 300 entries.
+- The API key is never part of a cache key or stored value.
+
+Images are not API calls: they load from RAWG's CDN and are cached by the browser's normal HTTP cache. The app
+requests resized versions to keep them small.
+
 ### Moving the library to a backend
 
 Your library is stored in `localStorage` (key `ogle:library`). All access goes through the `LibraryRepository`
