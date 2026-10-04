@@ -133,13 +133,15 @@ export interface ListGamesOptions {
   genre?: string
   /** e.g. `-added`, `-metacritic`, `-released`, `name`. */
   ordering?: string
+  /** RAWG store id(s), comma separated. 1 is Steam. */
+  stores?: string
 }
 
 export function listGames(options: ListGamesOptions = {}, signal?: AbortSignal) {
-  const { page = 1, pageSize = 24, search, genre, ordering } = options
+  const { page = 1, pageSize = 24, search, genre, ordering, stores } = options
   return request<Paginated<GameSummary>>(
     '/games',
-    { page, page_size: pageSize, search, genres: genre, ordering, search_precise: search ? 'true' : undefined },
+    { page, page_size: pageSize, search, genres: genre, ordering, stores, search_precise: search ? 'true' : undefined },
     signal,
   )
 }
