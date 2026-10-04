@@ -61,6 +61,13 @@ RAWG's free tier is rate limited, so responses are cached (`src/api/cache.ts`, u
 Images are not API calls: they load from RAWG's CDN and are cached by the browser's normal HTTP cache. The app
 requests resized versions to keep them small.
 
+### Build commit in the footer
+
+The footer shows the commit the running build was made from, linked to that commit on GitHub. `vite.config.ts`
+injects the full SHA at build time from Netlify's `COMMIT_REF` (falling back to `git rev-parse HEAD` locally) and
+the repository URL from `package.json`. Values are validated before use; if the commit cannot be determined (for
+example a build from a source tarball) the footer simply omits it.
+
 ### Moving the library to a backend
 
 Your library is stored in `localStorage` (key `ogle:library`). All access goes through the `LibraryRepository`
