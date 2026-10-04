@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/16/solid'
 import { fetchSteamLibrary, matchSteamGames, type MatchResult } from '@/api/steam'
 import { useLibraryStore } from '@/stores/library'
-import { buildSteamEntries, type SteamImportPlan } from '@/utils/steamImport'
+import { buildSteamEntries, listSkipped, type SteamImportPlan } from '@/utils/steamImport'
 import { parseSteamProfile } from '@/utils/steamProfile'
 
 export interface SteamImportSubmission {
@@ -48,6 +48,8 @@ defineExpose({ show })
 const valid = computed(() => parseSteamProfile(profile.value) !== null)
 const busy = computed(() => phase.value === 'fetching' || phase.value === 'matching')
 const plan = computed(() => (result.value ? buildSteamEntries(result.value.matches, library.get) : null))
+const unmatchedList = computed(() => listSkipped(result.value?.unmatched ?? []))
+const failedList = computed(() => listSkipped(result.value?.failed ?? []))
 const plural = (n: number, one = 'game') => `${n} ${one}${n === 1 ? '' : 's'}`
 
 async function load() {
@@ -142,12 +144,28 @@ function submit() {
             Ready to import: {{ plural(plan.added) }} new<template v-if="plan.updated">, hours updated on {{ plural(plan.updated) }}</template>.
           </template>
           <template v-else>Nothing to import: your library already has these games and hours.</template>
-          <span v-if="result.unmatched.length" class="block text-status-wishlist">
-            {{ plural(result.unmatched.length) }} could not be matched to a RAWG game and will be skipped.
-          </span>
-          <span v-if="result.failed.length" class="block text-status-wishlist">
-            {{ plural(result.failed.length) }} could not be looked up (RAWG error); try again later.
-          </span>
+          <details v-if="unmatchedList.length" class="text-status-wishlist" data-testid="steam-unmatched">
+            <summary class="cursor-pointer">
+              {{ plural(unmatchedList.length) }} could not be matched to a RAWG game and will be skipped.
+            </summary>
+            <ul class="mt-1 max-h-48 space-y-0.5 overflow-y-auto pl-4 text-xs text-slate-300">
+              <li v-for="g in unmatchedList" :key="g.appId" class="flex justify-between gap-3">
+                <span class="truncate">{{ g.name }}</span>
+                <span v-if="g.hours" class="shrink-0 text-muted">{{ g.hours }} h</span>
+              </li>
+            </ul>
+          </details>
+          <details v-if="failedList.length" class="text-status-wishlist" data-testid="steam-failed">
+            <summary class="cursor-pointer">
+              {{ plural(failedList.length) }} could not be looked up (RAWG error); try again later.
+            </summary>
+            <ul class="mt-1 max-h-48 space-y-0.5 overflow-y-auto pl-4 text-xs text-slate-300">
+              <li v-for="g in failedList" :key="g.appId" class="flex justify-between gap-3">
+                <span class="truncate">{{ g.name }}</span>
+                <span v-if="g.hours" class="shrink-0 text-muted">{{ g.hours }} h</span>
+              </li>
+            </ul>
+          </details>
         </div>
       </div>
 

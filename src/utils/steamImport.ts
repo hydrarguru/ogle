@@ -97,3 +97,16 @@ export function buildSteamEntries(
   }
   return plan
 }
+
+export interface SkippedGame {
+  appId: number
+  name: string
+  hours: number
+}
+
+/** Games for display, most played first so the ones that matter most are at the top. */
+export function listSkipped(games: SteamGame[]): SkippedGame[] {
+  return games
+    .map((g) => ({ appId: g.appId, name: g.name, hours: roundHours(g.playtimeMinutes) }))
+    .sort((a, b) => b.hours - a.hours || a.name.localeCompare(b.name))
+}
