@@ -1,0 +1,43 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #0b0d12;
+  --color-surface: #141821;
+  --color-surface-2: #1c2230;
+  --color-border: #272e3d;
+  --color-muted: #8b94a7;
+  --color-accent: #ffd580;
+  --color-accent-strong: #ffbf47;
+
+  --color-status-playing: #38bdf8;
+  --color-status-completed: #34d399;
+  --color-status-backlog: #a78bfa;
+  --color-status-wishlist: #fbbf24;
+  --color-status-dropped: #fb7185;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-bg font-sans text-slate-100 antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm font-medium transition hover:border-muted disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply border-transparent bg-accent text-bg hover:bg-accent-strong hover:border-transparent;
+  }
+  .field {
+    @apply w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-slate-100 placeholder:text-muted focus:border-accent focus:outline-none;
+  }
+}
