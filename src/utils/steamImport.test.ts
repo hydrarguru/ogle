@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildSteamEntries, normalizeTitle, pickMatch, statusFor, type SteamGame } from './steamImport'
+import { buildSteamEntries, listSkipped, normalizeTitle, pickMatch, statusFor, type SteamGame } from './steamImport'
 import type { GameSummary } from '@/types/rawg'
 import type { LibraryEntry } from '@/types/library'
 
@@ -93,5 +93,16 @@ describe('buildSteamEntries', () => {
     )
     expect(plan.entries).toHaveLength(1)
     expect(plan.entries[0]).toMatchObject({ hoursPlayed: 1.5, status: 'playing' })
+  })
+})
+
+describe('listSkipped', () => {
+  it('lists most played first, then by name, with hours', () => {
+    expect(listSkipped([steam(1, 'Zed', 0), steam(2, 'Alpha', 0), steam(3, 'Big', 1200), steam(4, 'Small', 33)])).toEqual([
+      { appId: 3, name: 'Big', hours: 20 },
+      { appId: 4, name: 'Small', hours: 0.6 },
+      { appId: 2, name: 'Alpha', hours: 0 },
+      { appId: 1, name: 'Zed', hours: 0 },
+    ])
   })
 })
