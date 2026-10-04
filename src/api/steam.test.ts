@@ -12,7 +12,10 @@ const page = (...names: string[]) => ({
   results: names.map((name, i) => ({ id: i + 1, name })),
 })
 
-afterEach(() => vi.restoreAllMocks())
+afterEach(() => {
+  vi.restoreAllMocks()
+  vi.mocked(listGames).mockReset()
+})
 
 describe('matchSteamGames', () => {
   it('splits games into matched, unmatched and failed, searching Steam-listed games only', async () => {
@@ -28,6 +31,27 @@ describe('matchSteamGames', () => {
     expect(result.failed.map((g) => g.appId)).toEqual([3])
     expect(progress).toHaveBeenLastCalledWith({ done: 3, total: 3 })
     expect(vi.mocked(listGames).mock.calls[0][0]).toMatchObject({ stores: '1' })
+  })
+
+  it('retries unmatched games with a plain title and then without the Steam filter', async () => {
+    const calls: { search?: string; stores?: string }[] = []
+    vi.mocked(listGames).mockImplementation((async (options: { search?: string; stores?: string }) => {
+      calls.push({ search: options.search, stores: options.stores })
+      return options.stores === undefined ? page('Obscure Game') : page('Nothing')
+    }) as unknown as typeof listGames)
+    const result = await matchSteamGames([game(1, 'Obscure Game - Deluxe Edition')])
+    expect(result.matches).toHaveLength(1)
+    expect(calls).toEqual([
+      { search: 'Obscure Game - Deluxe Edition', stores: '1' },
+      { search: 'obscure game', stores: '1' },
+      { search: 'Obscure Game - Deluxe Edition', stores: undefined },
+    ])
+  })
+
+  it('stops at the first search that finds the game', async () => {
+    vi.mocked(listGames).mockImplementation((async () => page('Portal 2')) as unknown as typeof listGames)
+    await matchSteamGames([game(1, 'Portal 2')])
+    expect(listGames).toHaveBeenCalledTimes(1)
   })
 
   it('stops when aborted', async () => {

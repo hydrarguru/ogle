@@ -37,6 +37,12 @@ pnpm dev
   so some will be skipped (and are counted). New games become *playing* if you played them in the last two weeks,
   otherwise *backlog*, with hours set from Steam. Games you already have keep their status, rating and notes and only
   get their hours raised, never lowered.
+  Titles are compared loosely (edition suffixes, year tags and roman numerals are ignored, subtitles are not), and
+  games not found with the Steam filter are searched again across all of RAWG. Games that still do not match are
+  listed, and an "I would like to manually add games." button lets you search RAWG and pick the right game for each.
+  Where Steam sells one game as several apps (e.g. Call of Duty: Black Ops with separate Single Player, Multiplayer and
+  Zombies entries) but RAWG has one, a trailing mode label is ignored when matching, and when matching by hand you can
+  pick the same game for several entries. They are combined into one library entry with their playtime added up.
 
 ### Steam import setup
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildSteamEntries, listSkipped, normalizeTitle, pickMatch, statusFor, type SteamGame } from './steamImport'
+import { buildSteamEntries, coreTitle, listSkipped, normalizeTitle, stripModeSuffix, pickMatch, statusFor, type SteamGame } from './steamImport'
 import type { GameSummary } from '@/types/rawg'
 import type { LibraryEntry } from '@/types/library'
 
@@ -48,6 +48,83 @@ describe('title matching', () => {
     expect(pickMatch(steam(620, 'Portal 2'), candidates)?.id).toBe(2)
     expect(pickMatch(steam(620, 'Portal 2'), [candidates[0]])).toBeUndefined()
     expect(pickMatch(steam(1, '™'), candidates)).toBeUndefined()
+  })
+})
+
+describe('loose title matching', () => {
+  it.each([
+    ['Batman: Arkham City - Game of the Year Edition', 'Batman: Arkham City'],
+    ['DOOM', 'DOOM (2016)'],
+    ['The Witcher 3: Wild Hunt', 'Witcher 3: Wild Hunt'],
+    ['FINAL FANTASY VII', 'Final Fantasy 7'],
+    ['Wolfenstein II: The New Colossus', 'Wolfenstein 2: The New Colossus'],
+    ['BioShock Remastered', 'BioShock'],
+    ['Mass Effect Legendary Edition', 'Mass Effect'],
+    ['Tomb Raider: Definitive Edition', 'Tomb Raider'],
+  ])('treats %s as %s', (steamName, rawgName) => {
+    expect(pickMatch(steam(1, steamName), [rawg(9, rawgName)])?.id).toBe(9)
+  })
+
+  it.each([
+    ['Batman', 'Batman: Arkham City'],
+    ['Portal', 'Portal 2'],
+    ['Civilization V', 'Civilization VI'],
+    ['Resident Evil', 'Resident Evil 4'],
+  ])('does not treat %s as %s', (steamName, rawgName) => {
+    expect(pickMatch(steam(1, steamName), [rawg(9, rawgName)])).toBeUndefined()
+  })
+
+  it('prefers an identical title over a loose one', () => {
+    const candidates = [rawg(1, 'DOOM (2016)'), rawg(2, 'DOOM')]
+    expect(pickMatch(steam(1, 'DOOM'), candidates)?.id).toBe(2)
+  })
+
+  it('keeps the first word, so a title that starts with a roman numeral is untouched', () => {
+    expect(coreTitle('X-Men')).toBe('x men')
+    expect(coreTitle('The Last of Us')).toBe('last of us')
+  })
+})
+
+describe('games Steam splits into one app per mode', () => {
+  const base = rawg(5, 'Call of Duty: Black Ops')
+
+  it.each(['Call of Duty®: Black Ops - Multiplayer', 'Call of Duty: Black Ops - Zombies', 'Call of Duty: Black Ops - Single Player', 'Call of Duty: Black Ops: Campaign'])(
+    'matches %s to the base game',
+    (name) => {
+      expect(pickMatch(steam(1, name), [base])?.id).toBe(5)
+    },
+  )
+
+  it('does not mix up different games in a series', () => {
+    expect(pickMatch(steam(1, 'Call of Duty: Black Ops II - Zombies'), [base])).toBeUndefined()
+    expect(pickMatch(steam(1, 'Call of Duty: Black Ops III'), [base])).toBeUndefined()
+  })
+
+  it('prefers a RAWG entry that is named exactly like the mode app', () => {
+    const own = rawg(6, 'Call of Duty: Black Ops - Zombies')
+    expect(pickMatch(steam(1, 'Call of Duty: Black Ops - Zombies'), [base, own])?.id).toBe(6)
+  })
+
+  it('only strips a trailing label after a separator', () => {
+    expect(stripModeSuffix('Zombies')).toBe('Zombies')
+    expect(stripModeSuffix('Plants vs. Zombies')).toBe('Plants vs. Zombies')
+    expect(stripModeSuffix('Left 4 Dead - Multiplayer')).toBe('Left 4 Dead')
+    expect(stripModeSuffix('Game - Co-op ')).toBe('Game')
+  })
+
+  it('combines the apps into one entry with added-up hours and reports it', () => {
+    const plan = buildSteamEntries(
+      [
+        { game: steam(1, 'Call of Duty: Black Ops', 600, 0), rawg: base },
+        { game: steam(2, 'Call of Duty: Black Ops - Multiplayer', 1200, 0), rawg: base },
+        { game: steam(3, 'Call of Duty: Black Ops - Zombies', 300, 0), rawg: base },
+        { game: steam(4, 'Portal 2', 60, 0), rawg: rawg(9, 'Portal 2') },
+      ],
+      () => undefined,
+    )
+    expect(plan.added).toBe(2)
+    expect(plan.entries.find((e) => e.id === 5)?.hoursPlayed).toBe(35)
+    expect(plan.combined).toEqual([{ id: 5, name: 'Call of Duty: Black Ops', count: 3, hours: 35 }])
   })
 })
 
