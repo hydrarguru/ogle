@@ -32,6 +32,21 @@ pnpm dev
   in a file are skipped and counted.
   The import dialog accepts a file or pasted JSON, shows the expected format with a copyable example, and previews
   how many games are new, already in your library, or invalid before anything is changed.
+- **Steam import**: paste a Steam profile link (`steamcommunity.com/id/…` or `/profiles/…`, or a SteamID64) to import
+  your games and playtime. The profile's *Game details* must be public. Games are matched to RAWG by exact title,
+  so some will be skipped (and are counted). New games become *playing* if you played them in the last two weeks,
+  otherwise *backlog*, with hours set from Steam. Games you already have keep their status, rating and notes and only
+  get their hours raised, never lowered.
+
+### Steam import setup
+
+Browsers cannot call the Steam Web API (no CORS, and it needs a secret key), so a Netlify function
+(`netlify/functions/steam-library.ts`) does it server side.
+
+1. Get a key at <https://steamcommunity.com/dev/apikey>.
+2. Set `STEAM_API_KEY` in the Netlify site's environment variables (do not prefix it with `VITE_`).
+3. Locally, put it in `.env` and run `pnpm dlx netlify-cli dev` instead of `pnpm dev`. Plain `pnpm dev` has no
+   function, and the dialog says so.
 
 ## Architecture
 
