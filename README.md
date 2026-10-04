@@ -30,6 +30,8 @@ pnpm dev
 - **Export / import** the library as JSON (backup, or move between browsers). Importing merges: for games you
   already have, the most recently updated copy wins, so it never overwrites newer local edits. Invalid records
   in a file are skipped and counted.
+  The import dialog accepts a file or pasted JSON, shows the expected format with a copyable example, and previews
+  how many games are new, already in your library, or invalid before anything is changed.
 
 ## Architecture
 
