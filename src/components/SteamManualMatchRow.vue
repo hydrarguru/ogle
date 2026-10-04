@@ -2,13 +2,18 @@
 import { onBeforeUnmount, ref } from 'vue'
 import { listGames } from '@/api/rawg'
 import type { GameSummary } from '@/types/rawg'
-import type { SkippedGame } from '@/utils/steamImport'
+import { stripModeSuffix, type SkippedGame } from '@/utils/steamImport'
 
-const props = defineProps<{ game: SkippedGame; picked?: GameSummary }>()
+const props = defineProps<{
+  game: SkippedGame
+  picked?: GameSummary
+  /** Games already picked for other rows, offered so several Steam apps can be combined into one game. */
+  suggestions?: GameSummary[]
+}>()
 const emit = defineEmits<{ pick: [game: GameSummary]; clear: [] }>()
 
 const open = ref(false)
-const query = ref(props.game.name)
+const query = ref(stripModeSuffix(props.game.name))
 const results = ref<GameSummary[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -64,6 +69,19 @@ function choose(game: GameSummary) {
     </div>
 
     <div v-if="open" class="mt-2 space-y-2">
+      <div v-if="suggestions?.length" class="space-y-1">
+        <p class="text-xs text-muted">Same game as one you already picked? Combine them (hours are added up):</p>
+        <button
+          v-for="s in suggestions"
+          :key="s.id"
+          type="button"
+          class="block w-full truncate rounded-lg px-2 py-1 text-left text-xs hover:bg-white/5"
+          data-testid="steam-manual-combine"
+          @click="choose(s)"
+        >
+          + {{ s.name }}
+        </button>
+      </div>
       <form class="flex gap-2" @submit.prevent="search">
         <input v-model="query" type="text" class="field py-1 text-sm" :aria-label="`Search RAWG for ${game.name}`" />
         <button type="submit" class="btn" :disabled="loading || !query.trim()">Search</button>

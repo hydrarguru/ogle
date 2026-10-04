@@ -35,13 +35,26 @@ const EDITION_NOISE = [
   /\b(?:game of the year|goty|definitive|remastered|remaster|redux|hd|enhanced)\b/g,
 ]
 
+const MODE_SUFFIX =
+  /\s*(?:[-\u2013\u2014:]\s*)(?:single[\s-]?player|multi[\s-]?player|campaign|zombies|co-?op|online|dedicated server)\s*$/i
+
+/**
+ * Steam sells some games as several apps, one per mode ("Call of Duty: Black Ops - Multiplayer"), where RAWG has a
+ * single entry. This drops a trailing mode label so those apps resolve to the base game. A bare "Zombies" is untouched.
+ */
+export function stripModeSuffix(name: string): string {
+  const base = name.replace(MODE_SUFFIX, '').trim()
+  return base || name
+}
+
 /**
  * A looser key for comparing titles: ignores "(2016)" style tags, edition suffixes, a leading "The",
- * and writes roman numerals (after the first word) as digits, so "Final Fantasy VII" equals "final fantasy 7".
+ * a trailing mode label (see `stripModeSuffix`), and writes roman numerals (after the first word) as digits, so
+ * "Final Fantasy VII" equals "final fantasy 7".
  * Subtitles are kept, so "Batman" never equals "Batman: Arkham City".
  */
 export function coreTitle(name: string): string {
-  let text = normalizeTitle(name.replace(/\([^)]*\)|\[[^\]]*\]/g, ' '))
+  let text = normalizeTitle(stripModeSuffix(name.replace(/\([^)]*\)|\[[^\]]*\]/g, ' ')))
   for (const noise of EDITION_NOISE) text = text.replace(noise, ' ')
   return text
     .split(/\s+/)
@@ -79,30 +92,35 @@ export interface SteamImportPlan {
   updated: number
   /** Existing games that already have at least the Steam hours. */
   unchanged: number
+  /** RAWG games that several Steam apps were combined into, with their added-up hours. */
+  combined: { id: number; name: string; count: number; hours: number }[]
 }
 
 /**
  * Turns matched games into entries to merge via `importEntries`.
  * New games get a status derived from play time. Games already in the library keep their status, rating and
  * notes; only their hours are raised, and never lowered (the user may track other platforms too).
- * Two Steam apps that map to the same RAWG game (editions, demos) have their playtime added together.
+ * Several Steam apps that map to the same RAWG game (editions, one app per game mode) are combined into one entry
+ * with their playtime added together.
  */
 export function buildSteamEntries(
   matches: SteamMatch[],
   existing: (id: number) => LibraryEntry | undefined,
   now = new Date().toISOString(),
 ): SteamImportPlan {
-  const merged = new Map<number, { rawg: GameSummary; minutes: number; recent: number }>()
+  const merged = new Map<number, { rawg: GameSummary; minutes: number; recent: number; count: number }>()
   for (const { game, rawg } of matches) {
-    const m = merged.get(rawg.id) ?? { rawg, minutes: 0, recent: 0 }
+    const m = merged.get(rawg.id) ?? { rawg, minutes: 0, recent: 0, count: 0 }
+    m.count++
     m.minutes += game.playtimeMinutes
     m.recent += game.recentMinutes
     merged.set(rawg.id, m)
   }
 
-  const plan: SteamImportPlan = { entries: [], added: 0, updated: 0, unchanged: 0 }
-  for (const { rawg, minutes, recent } of merged.values()) {
+  const plan: SteamImportPlan = { entries: [], added: 0, updated: 0, unchanged: 0, combined: [] }
+  for (const { rawg, minutes, recent, count } of merged.values()) {
     const hours = roundHours(minutes)
+    if (count > 1) plan.combined.push({ id: rawg.id, name: rawg.name, count, hours })
     const current = existing(rawg.id)
     if (current) {
       if (hours > current.hoursPlayed) {

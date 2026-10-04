@@ -60,6 +60,8 @@ const allMatches = computed<SteamMatch[]>(() => {
   return [...result.value.matches, ...byHand]
 })
 const remaining = computed(() => (result.value?.unmatched ?? []).filter((g) => !manual.value[g.appId]))
+/** Distinct games picked so far, offered on the other rows for combining. */
+const pickedGames = computed(() => [...new Map(Object.values(manual.value).map((g) => [g.id, g])).values()])
 const plan = computed(() => (result.value ? buildSteamEntries(allMatches.value, library.get) : null))
 const unmatchedList = computed(() => listSkipped(remaining.value))
 const manualList = computed(() => listSkipped(result.value?.unmatched ?? []))
@@ -158,6 +160,9 @@ function submit() {
             Ready to import: {{ plural(plan.added) }} new<template v-if="plan.updated">, hours updated on {{ plural(plan.updated) }}</template>.
           </template>
           <template v-else>Nothing to import: your library already has these games and hours.</template>
+          <span v-for="c in plan.combined" :key="c.id" class="block text-xs text-slate-300" data-testid="steam-combined">
+            {{ c.count }} Steam entries combined into {{ c.name }} ({{ c.hours }} h)
+          </span>
           <template v-if="manualOpen">
             <p class="text-status-wishlist">Pick the right RAWG game for each one you want to import.</p>
             <ul class="mt-1 max-h-72 space-y-1 overflow-y-auto text-slate-100" data-testid="steam-manual-list">
@@ -166,6 +171,7 @@ function submit() {
                 :key="g.appId"
                 :game="g"
                 :picked="manual[g.appId]"
+                :suggestions="pickedGames.filter((p) => p.id !== manual[g.appId]?.id)"
                 @pick="manual[g.appId] = $event"
                 @clear="delete manual[g.appId]"
               />

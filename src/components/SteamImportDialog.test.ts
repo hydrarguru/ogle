@@ -92,4 +92,24 @@ describe('SteamImportDialog manual matching', () => {
     expect(wrapper.find('[data-testid="steam-manual-picked"]').exists()).toBe(false)
     expect(wrapper.get('[data-testid="steam-preview"]').text()).toContain('1 game new')
   })
+
+  it('lets several Steam entries be combined into one picked game', async () => {
+    const cod = rawg(5, 'Call of Duty: Black Ops')
+    vi.mocked(listGames).mockResolvedValue({ count: 1, next: null, previous: null, results: [cod] })
+    const wrapper = await showPreview([steam(2, 'Black Ops Weird MP', 600), steam(3, 'Black Ops Weird Zombies', 300)])
+
+    await wrapper.get('[data-testid="steam-manual-open"]').trigger('click')
+    const rows = () => wrapper.findAll('[data-testid="steam-manual-row"]')
+    await rows()[0].get('button[aria-expanded]').trigger('click')
+    await flushPromises()
+    expect(rows()[0].find('[data-testid="steam-manual-combine"]').exists()).toBe(false) // nothing picked yet
+    await rows()[0].get('[data-testid="steam-manual-option"]').trigger('click')
+
+    await rows()[1].get('button[aria-expanded]').trigger('click')
+    await flushPromises()
+    await rows()[1].get('[data-testid="steam-manual-combine"]').trigger('click')
+
+    expect(wrapper.get('[data-testid="steam-preview"]').text()).toContain('2 games new') // Portal 2 + one combined game
+    expect(wrapper.get('[data-testid="steam-combined"]').text()).toContain('2 Steam entries combined into Call of Duty: Black Ops (15 h)')
+  })
 })
