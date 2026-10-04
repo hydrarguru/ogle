@@ -1,22 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import 'tailwindcss';
 
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    overflow-x: hidden;
+  --color-bg: #0b0d12;
+  --color-surface: #141821;
+  --color-surface-2: #1c2230;
+  --color-border: #272e3d;
+  --color-muted: #8b94a7;
+  --color-accent: #ffd580;
+  --color-accent-strong: #ffbf47;
 
-    font-family: Roboto, sans-serif;
-    --background-color: #151515;
-    --secondary-color: #202020;
-    --accent: #FFD580;
-
-    --primary-btn: #373737;
-    --primary-btn-hover: #ffffff;
+  --color-status-playing: #38bdf8;
+  --color-status-completed: #34d399;
+  --color-status-backlog: #a78bfa;
+  --color-status-wishlist: #fbbf24;
+  --color-status-dropped: #fb7185;
 }
 
-body {
-    background-color: var(--background-color);
-    color: #ffffff;
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-bg font-sans text-slate-100 antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-surface-2 px-4 py-2 text-sm font-medium transition hover:border-muted disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply border-transparent bg-accent text-bg hover:bg-accent-strong hover:border-transparent;
+  }
+  .field {
+    @apply w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-slate-100 placeholder:text-muted focus:border-accent focus:outline-none;
+  }
 }
