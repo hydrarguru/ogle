@@ -1,4 +1,5 @@
 import { LIBRARY_STATUSES, type LibraryEntry } from '@/types/library'
+import { MAX_HISTORY, normalizeHistory } from './statusHistory'
 
 export const EXPORT_FORMAT = 'ogle-library'
 export const EXPORT_VERSION = 1
@@ -38,6 +39,7 @@ export function normalizeEntry(raw: unknown, now: string): LibraryEntry | null {
   const rating = typeof e.rating === 'number' && Number.isFinite(e.rating) ? Math.min(5, Math.max(1, Math.round(e.rating))) : null
   const hours = typeof e.hoursPlayed === 'number' && Number.isFinite(e.hoursPlayed) ? e.hoursPlayed : 0
   const addedAt = isoOr(e.addedAt, now)
+  const status = e.status as LibraryEntry['status']
 
   return {
     id: e.id as number,
@@ -45,12 +47,13 @@ export function normalizeEntry(raw: unknown, now: string): LibraryEntry | null {
     image: typeof e.image === 'string' && /^https?:\/\//.test(e.image) ? e.image : null,
     released: typeof e.released === 'string' ? e.released.slice(0, 10) : null,
     genres: Array.isArray(e.genres) ? e.genres.filter((g): g is string => typeof g === 'string').slice(0, 20) : [],
-    status: e.status as LibraryEntry['status'],
+    status,
     rating,
     hoursPlayed: Math.min(99999, Math.max(0, Math.round(hours * 10) / 10)),
     notes: typeof e.notes === 'string' ? e.notes.slice(0, 2000) : '',
     addedAt,
     updatedAt: isoOr(e.updatedAt, addedAt),
+    history: normalizeHistory(e.history, status, addedAt),
   }
 }
 
@@ -107,6 +110,12 @@ export const FORMAT_FIELDS: FormatField[] = [
     required: false,
     note: 'ISO date-time. Defaults to addedAt. If you already have the game, the newer copy wins.',
   },
+  {
+    name: 'history',
+    type: '{ status, at }[]',
+    required: false,
+    note: `Status changes for the timeline: a status and an ISO date-time each, up to ${MAX_HISTORY}. Defaults to the status at addedAt.`,
+  },
 ]
 
 /** A complete entry followed by one that only has the required fields. */
@@ -127,6 +136,11 @@ export const EXAMPLE_JSON = JSON.stringify(
         genres: ['Puzzle', 'Action'],
         addedAt: '2024-01-15T18:30:00.000Z',
         updatedAt: '2024-02-01T20:00:00.000Z',
+        history: [
+          { status: 'backlog', at: '2024-01-15T18:30:00.000Z' },
+          { status: 'playing', at: '2024-01-20T19:00:00.000Z' },
+          { status: 'completed', at: '2024-02-01T20:00:00.000Z' },
+        ],
       },
       { id: 3328, name: 'The Witcher 3: Wild Hunt', status: 'backlog' },
     ],

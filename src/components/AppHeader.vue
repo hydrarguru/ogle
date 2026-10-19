@@ -36,6 +36,7 @@ const linkClass = 'rounded-lg px-3 py-2 text-sm font-medium text-muted transitio
             {{ library.count }}
           </span>
         </RouterLink>
+        <RouterLink to="/timeline" :class="linkClass" active-class="!text-white bg-white/5">Timeline</RouterLink>
       </nav>
 
       <div class="ml-auto hidden w-full max-w-xs sm:block">

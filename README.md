@@ -27,6 +27,11 @@ pnpm dev
 - **Personal library** with status (playing / backlog / wishlist / completed / dropped), 1-5 star rating,
   hours played and notes. Add from any card or the detail page.
 - **Library page** with stats, status tabs, filtering and sorting.
+- **Timeline** (`/timeline`): a horizontal timeline with one row per game and a mark for each status change (started,
+  finished, dropped, and optionally added to backlog or wishlisted). Bars show how long a game was played or waited.
+  Zoom between years, months and weeks, and choose which events to show. Every status change is recorded with
+  its date. On a game's page the history can be corrected or back-filled (e.g. "finished on 2023-05-02"). Entries
+  saved before this feature get one event: their current status on the day they were added.
 - **Export / import** the library as JSON (backup, or move between browsers). Importing merges: for games you
   already have, the most recently updated copy wins, so it never overwrites newer local edits. Invalid records
   in a file are skipped and counted.

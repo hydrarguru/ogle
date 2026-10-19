@@ -32,6 +32,7 @@ const entry = (id: number, patch: Partial<LibraryEntry> = {}): LibraryEntry => (
   notes: 'mine',
   addedAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
+  history: [{ status: 'completed', at: '2024-01-01T00:00:00.000Z' }],
   ...patch,
 })
 
@@ -145,6 +146,7 @@ describe('buildSteamEntries', () => {
       rating: null,
       addedAt: now,
       updatedAt: now,
+      history: [{ status: 'backlog', at: now }],
     })
   })
 

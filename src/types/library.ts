@@ -10,6 +10,13 @@ export interface GameRef {
   genres: string[]
 }
 
+/** A moment the game was put in a status, e.g. when it was started or finished. */
+export interface StatusEvent {
+  status: LibraryStatus
+  /** ISO date-time. */
+  at: string
+}
+
 export interface LibraryEntry extends GameRef {
   status: LibraryStatus
   /** Personal rating, 1-5, or null when unrated. */
@@ -18,6 +25,8 @@ export interface LibraryEntry extends GameRef {
   notes: string
   addedAt: string
   updatedAt: string
+  /** Status changes, oldest first. The last one normally matches `status`. */
+  history: StatusEvent[]
 }
 
 /** Fields the user can edit on an entry. */

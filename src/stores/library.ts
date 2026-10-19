@@ -7,7 +7,9 @@ import {
   type LibraryEntry,
   type LibraryEntryPatch,
   type LibraryStatus,
+  type StatusEvent,
 } from '@/types/library'
+import { appendEvent, normalizeHistory } from '@/utils/statusHistory'
 
 export const MAX_HOURS = 99999
 export const MAX_NOTES_LENGTH = 2000
@@ -89,13 +91,33 @@ export const useLibraryStore = defineStore('library', () => {
     const existing = entries.value[game.id]
     if (existing) return update(game.id, { status })
     const now = new Date().toISOString()
-    await commit(game.id, { ...game, status, rating: null, hoursPlayed: 0, notes: '', addedAt: now, updatedAt: now })
+    await commit(game.id, {
+      ...game,
+      status,
+      rating: null,
+      hoursPlayed: 0,
+      notes: '',
+      addedAt: now,
+      updatedAt: now,
+      history: [{ status, at: now }],
+    })
   }
 
   async function update(gameId: number, patch: LibraryEntryPatch) {
     const existing = entries.value[gameId]
     if (!existing) return
-    await commit(gameId, { ...existing, ...sanitize(patch), updatedAt: new Date().toISOString() })
+    const now = new Date().toISOString()
+    const history =
+      patch.status && patch.status !== existing.status ? appendEvent(existing.history, patch.status, now) : existing.history
+    await commit(gameId, { ...existing, ...sanitize(patch), history, updatedAt: now })
+  }
+
+  /** Replaces the status history, e.g. after the user corrected when they started or finished a game. */
+  async function setHistory(gameId: number, history: StatusEvent[]) {
+    const existing = entries.value[gameId]
+    if (!existing) return
+    const clean = normalizeHistory(history, existing.status, existing.addedAt)
+    await commit(gameId, { ...existing, history: clean, updatedAt: new Date().toISOString() })
   }
 
   async function remove(gameId: number) {
@@ -130,5 +152,5 @@ export const useLibraryStore = defineStore('library', () => {
     return result
   }
 
-  return { entries, loaded, error, list, count, countsByStatus, stats, get, load, add, update, remove, importEntries }
+  return { entries, loaded, error, list, count, countsByStatus, stats, get, load, add, update, setHistory, remove, importEntries }
 })

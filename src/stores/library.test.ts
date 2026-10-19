@@ -90,4 +90,31 @@ describe('library store', () => {
     expect(store.get(3)?.name).toBe('Game 3')
     expect((await new LocalStorageLibraryRepository(localStorage, 'test').list()).length).toBe(3)
   })
+
+  it('records status changes in the history', async () => {
+    const store = useLibraryStore()
+    await store.add(game(1), 'backlog')
+    await store.update(1, { rating: 4 })
+    await store.add(game(1), 'playing')
+    await store.update(1, { status: 'playing' })
+    await store.update(1, { status: 'completed' })
+    expect(store.get(1)?.history.map((e) => e.status)).toEqual(['backlog', 'playing', 'completed'])
+    expect(store.get(1)?.history[0].at).toBe(store.get(1)?.addedAt)
+  })
+
+  it('replaces the history with a sorted, validated copy', async () => {
+    const store = useLibraryStore()
+    await store.add(game(1), 'completed')
+    const before = store.get(1)!.updatedAt
+    await new Promise((r) => setTimeout(r, 2))
+    await store.setHistory(1, [
+      { status: 'completed', at: '2024-03-01T00:00:00.000Z' },
+      { status: 'playing', at: '2024-01-01T00:00:00.000Z' },
+    ])
+    expect(store.get(1)?.history).toEqual([
+      { status: 'playing', at: '2024-01-01T00:00:00.000Z' },
+      { status: 'completed', at: '2024-03-01T00:00:00.000Z' },
+    ])
+    expect(store.get(1)!.updatedAt > before).toBe(true)
+  })
 })

@@ -13,6 +13,7 @@ import type { LibraryEntry } from '@/types/library'
 const entry: LibraryEntry = {
   id: 1, name: 'Portal 2', image: 'https://x.test/a.jpg', released: '2011-04-18', genres: ['Puzzle'],
   status: 'completed', rating: 5, hoursPlayed: 9.5, notes: 'GLaDOS', addedAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-02-01T00:00:00.000Z',
+  history: [{ status: 'playing', at: '2024-01-01T00:00:00.000Z' }, { status: 'completed', at: '2024-02-01T00:00:00.000Z' }],
 }
 
 describe('library export/import', () => {
@@ -66,6 +67,8 @@ describe('format documentation', () => {
     expect(entries.map((e) => e.name)).toEqual(['Portal 2', 'The Witcher 3: Wild Hunt'])
     // The minimal entry only has the required fields; everything else gets defaults.
     expect(entries[1]).toMatchObject({ rating: null, hoursPlayed: 0, notes: '', genres: [], image: null })
+    expect(entries[1].history).toEqual([{ status: 'backlog', at: entries[1].addedAt }])
+    expect(entries[0].history.map((e) => e.status)).toEqual(['backlog', 'playing', 'completed'])
   })
 
   it('documents exactly the fields an entry has', () => {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import StarRating from './StarRating.vue'
+import StatusHistoryEditor from './StatusHistoryEditor.vue'
 import { STATUS_META } from '@/constants/status'
 import { MAX_HOURS, MAX_NOTES_LENGTH, useLibraryStore } from '@/stores/library'
 import { LIBRARY_STATUSES, type GameRef, type LibraryStatus } from '@/types/library'
@@ -120,6 +121,8 @@ const addedOn = computed(() =>
           @blur="saveNotes"
         />
       </div>
+
+      <StatusHistoryEditor :entry="entry" />
 
       <div class="border-t border-border pt-4">
         <button v-if="!confirmingRemove" type="button" class="text-sm text-muted hover:text-status-dropped" @click="confirmingRemove = true">
