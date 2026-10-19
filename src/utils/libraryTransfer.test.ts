@@ -12,7 +12,7 @@ import type { LibraryEntry } from '@/types/library'
 
 const entry: LibraryEntry = {
   id: 1, name: 'Portal 2', image: 'https://x.test/a.jpg', released: '2011-04-18', genres: ['Puzzle'],
-  status: 'completed', rating: 5, hoursPlayed: 9.5, notes: 'GLaDOS', addedAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-02-01T00:00:00.000Z',
+  status: 'completed', history: [{ status: 'playing', at: '2024-01-01T00:00:00.000Z' }, { status: 'completed', at: '2024-02-01T00:00:00.000Z' }], rating: 5, hoursPlayed: 9.5, notes: 'GLaDOS', addedAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-02-01T00:00:00.000Z',
 }
 
 describe('library export/import', () => {
@@ -47,6 +47,18 @@ describe('library export/import', () => {
     const sanitized = entries.find((e) => e.id === 4)!
     expect(sanitized).toMatchObject({ rating: 5, hoursPlayed: 0, image: null, updatedAt: entry.addedAt })
     expect(sanitized.notes).toHaveLength(2000)
+  })
+
+  it('imports status history, and starts one at addedAt for files without it', () => {
+    const { history: _history, ...legacy } = entry
+    void _history
+    const file = JSON.stringify({
+      format: 'ogle-library', version: 1,
+      entries: [legacy, { ...entry, id: 2, history: [{ status: 'completed', at: '2024-03-01T00:00:00.000Z' }, { status: 'bogus', at: 'x' }] }],
+    })
+    const [first, second] = parseLibraryExport(file).entries
+    expect(first.history).toEqual([{ status: 'completed', at: entry.addedAt }])
+    expect(second.history).toEqual([{ status: 'completed', at: '2024-03-01T00:00:00.000Z' }])
   })
 
   it('keeps the last duplicate id', () => {

@@ -129,13 +129,15 @@ export function buildSteamEntries(
       } else plan.unchanged++
       continue
     }
+    const status = statusFor({ playtimeMinutes: minutes, recentMinutes: recent })
     plan.entries.push({
       id: rawg.id,
       name: rawg.name,
       image: rawg.background_image,
       released: rawg.released,
       genres: rawg.genres.map((g) => g.name),
-      status: statusFor({ playtimeMinutes: minutes, recentMinutes: recent }),
+      status,
+      history: [{ status, at: now }],
       rating: null,
       hoursPlayed: hours,
       notes: '',

@@ -1,4 +1,5 @@
 import { LIBRARY_STATUSES, type LibraryEntry } from '@/types/library'
+import { normalizeHistory } from '@/utils/statusHistory'
 
 /**
  * Persistence boundary for the personal library. The app only talks to this
@@ -47,7 +48,15 @@ export class LocalStorageLibraryRepository implements LibraryRepository {
     try {
       const parsed = JSON.parse(raw) as Partial<StoredLibrary>
       if (parsed.version !== SCHEMA_VERSION || typeof parsed.entries !== 'object' || !parsed.entries) return {}
-      return Object.fromEntries(Object.entries(parsed.entries).filter(([, entry]) => isEntry(entry)))
+      return Object.fromEntries(
+        Object.entries(parsed.entries)
+          .filter(([, entry]) => isEntry(entry))
+          // Entries saved before status history existed start their history when they were added.
+          .map(([id, entry]) => [
+            id,
+            { ...entry, history: normalizeHistory(entry.history, entry.status, entry.addedAt, entry.updatedAt) },
+          ]),
+      )
     } catch {
       return {}
     }

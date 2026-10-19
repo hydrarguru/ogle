@@ -31,6 +31,46 @@ describe('library store', () => {
     expect(store.get(1)?.status).toBe('playing')
   })
 
+  it('records each status change with its date', async () => {
+    vi.useFakeTimers()
+    try {
+      const store = useLibraryStore()
+      vi.setSystemTime(new Date('2024-01-01T10:00:00.000Z'))
+      await store.add(game(1), 'wishlist')
+      vi.setSystemTime(new Date('2024-02-01T10:00:00.000Z'))
+      await store.add(game(1), 'playing')
+      await store.update(1, { rating: 4 })
+      await store.update(1, { status: 'playing' })
+      vi.setSystemTime(new Date('2024-03-01T10:00:00.000Z'))
+      await store.update(1, { status: 'completed' })
+
+      expect(store.get(1)?.history).toEqual([
+        { status: 'wishlist', at: '2024-01-01T10:00:00.000Z' },
+        { status: 'playing', at: '2024-02-01T10:00:00.000Z' },
+        { status: 'completed', at: '2024-03-01T10:00:00.000Z' },
+      ])
+      const fresh = useLibraryStore(createPinia())
+      await fresh.load()
+      expect(fresh.get(1)?.history).toHaveLength(3)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('lets past status changes be redated or removed', async () => {
+    const store = useLibraryStore()
+    await store.add(game(1), 'playing')
+    await store.update(1, { status: 'completed' })
+    await store.moveHistoryChange(1, 0, '2020-05-05T12:00:00.000Z')
+    expect(store.get(1)?.history[0].at).toBe('2020-05-05T12:00:00.000Z')
+
+    await store.removeHistoryChange(1, 1)
+    expect(store.get(1)?.history).toHaveLength(2)
+    await store.removeHistoryChange(1, 0)
+    expect(store.get(1)?.history.map((c) => c.status)).toEqual(['completed'])
+    expect(store.get(1)?.status).toBe('completed')
+  })
+
   it('sanitizes rating, hours and notes', async () => {
     const store = useLibraryStore()
     await store.add(game(1), 'playing')

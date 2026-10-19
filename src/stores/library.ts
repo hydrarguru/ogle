@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { getLibraryRepository } from '@/services/libraryRepository'
+import { moveStatusChange, recordStatusChange, removeStatusChange } from '@/utils/statusHistory'
 import {
   LIBRARY_STATUSES,
   type GameRef,
@@ -89,13 +90,42 @@ export const useLibraryStore = defineStore('library', () => {
     const existing = entries.value[game.id]
     if (existing) return update(game.id, { status })
     const now = new Date().toISOString()
-    await commit(game.id, { ...game, status, rating: null, hoursPlayed: 0, notes: '', addedAt: now, updatedAt: now })
+    await commit(game.id, {
+      ...game,
+      status,
+      history: [{ status, at: now }],
+      rating: null,
+      hoursPlayed: 0,
+      notes: '',
+      addedAt: now,
+      updatedAt: now,
+    })
   }
 
+  /** Edits an entry; a new status is also recorded in its history. */
   async function update(gameId: number, patch: LibraryEntryPatch) {
     const existing = entries.value[gameId]
     if (!existing) return
-    await commit(gameId, { ...existing, ...sanitize(patch), updatedAt: new Date().toISOString() })
+    const now = new Date().toISOString()
+    const next = { ...existing, ...sanitize(patch), updatedAt: now }
+    if (patch.status) next.history = recordStatusChange(existing.history, patch.status, now)
+    await commit(gameId, next)
+  }
+
+  /** Corrects the date of one past status change, e.g. when the game was really finished. */
+  async function moveHistoryChange(gameId: number, index: number, at: string) {
+    const existing = entries.value[gameId]
+    if (!existing) return
+    const history = moveStatusChange(existing.history, index, at)
+    if (history !== existing.history) await commit(gameId, { ...existing, history, updatedAt: new Date().toISOString() })
+  }
+
+  /** Deletes one past status change. The current status cannot be removed this way. */
+  async function removeHistoryChange(gameId: number, index: number) {
+    const existing = entries.value[gameId]
+    if (!existing) return
+    const history = removeStatusChange(existing.history, index)
+    if (history !== existing.history) await commit(gameId, { ...existing, history, updatedAt: new Date().toISOString() })
   }
 
   async function remove(gameId: number) {
@@ -130,5 +160,21 @@ export const useLibraryStore = defineStore('library', () => {
     return result
   }
 
-  return { entries, loaded, error, list, count, countsByStatus, stats, get, load, add, update, remove, importEntries }
+  return {
+    entries,
+    loaded,
+    error,
+    list,
+    count,
+    countsByStatus,
+    stats,
+    get,
+    load,
+    add,
+    update,
+    moveHistoryChange,
+    removeHistoryChange,
+    remove,
+    importEntries,
+  }
 })

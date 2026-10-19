@@ -1,4 +1,5 @@
 import { LIBRARY_STATUSES, type LibraryEntry } from '@/types/library'
+import { normalizeHistory } from './statusHistory'
 
 export const EXPORT_FORMAT = 'ogle-library'
 export const EXPORT_VERSION = 1
@@ -38,6 +39,8 @@ export function normalizeEntry(raw: unknown, now: string): LibraryEntry | null {
   const rating = typeof e.rating === 'number' && Number.isFinite(e.rating) ? Math.min(5, Math.max(1, Math.round(e.rating))) : null
   const hours = typeof e.hoursPlayed === 'number' && Number.isFinite(e.hoursPlayed) ? e.hoursPlayed : 0
   const addedAt = isoOr(e.addedAt, now)
+  const updatedAt = isoOr(e.updatedAt, addedAt)
+  const status = e.status as LibraryEntry['status']
 
   return {
     id: e.id as number,
@@ -45,12 +48,13 @@ export function normalizeEntry(raw: unknown, now: string): LibraryEntry | null {
     image: typeof e.image === 'string' && /^https?:\/\//.test(e.image) ? e.image : null,
     released: typeof e.released === 'string' ? e.released.slice(0, 10) : null,
     genres: Array.isArray(e.genres) ? e.genres.filter((g): g is string => typeof g === 'string').slice(0, 20) : [],
-    status: e.status as LibraryEntry['status'],
+    status,
+    history: normalizeHistory(e.history, status, addedAt, updatedAt),
     rating,
     hoursPlayed: Math.min(99999, Math.max(0, Math.round(hours * 10) / 10)),
     notes: typeof e.notes === 'string' ? e.notes.slice(0, 2000) : '',
     addedAt,
-    updatedAt: isoOr(e.updatedAt, addedAt),
+    updatedAt,
   }
 }
 
@@ -94,6 +98,12 @@ export const FORMAT_FIELDS: FormatField[] = [
   { name: 'id', type: 'number', required: true, note: 'RAWG game id: the number in a game page URL, e.g. /games/3498.' },
   { name: 'name', type: 'string', required: true, note: 'Game title.' },
   { name: 'status', type: 'string', required: true, note: `One of: ${LIBRARY_STATUSES.join(', ')}.` },
+  {
+    name: 'history',
+    type: '{ status, at }[]',
+    required: false,
+    note: 'Status changes, oldest first, each with an ISO date-time. Defaults to the current status at addedAt.',
+  },
   { name: 'rating', type: 'number | null', required: false, note: 'Your rating from 1 to 5. Leave out for unrated.' },
   { name: 'hoursPlayed', type: 'number', required: false, note: 'Hours played, 0 to 99999. Defaults to 0.' },
   { name: 'notes', type: 'string', required: false, note: 'Up to 2000 characters.' },
@@ -119,6 +129,10 @@ export const EXAMPLE_JSON = JSON.stringify(
         id: 4200,
         name: 'Portal 2',
         status: 'completed',
+        history: [
+          { status: 'playing', at: '2024-01-15T18:30:00.000Z' },
+          { status: 'completed', at: '2024-02-01T20:00:00.000Z' },
+        ],
         rating: 5,
         hoursPlayed: 9.5,
         notes: 'Co-op was great.',

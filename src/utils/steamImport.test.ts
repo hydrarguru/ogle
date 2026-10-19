@@ -27,6 +27,7 @@ const entry = (id: number, patch: Partial<LibraryEntry> = {}): LibraryEntry => (
   released: null,
   genres: [],
   status: 'completed',
+  history: [{ status: patch.status ?? 'completed', at: '2024-01-01T00:00:00.000Z' }],
   rating: 5,
   hoursPlayed: 10,
   notes: 'mine',
