@@ -26,6 +26,9 @@ pnpm dev
 - **Game details** with description, screenshots, platforms, developers and ratings.
 - **Personal library** with status (playing / backlog / wishlist / completed / dropped), 1-5 star rating,
   hours played and notes. Add from any card or the detail page.
+- **Timeline** of your library: one row per game with a mark for every status change (started, finished, dropped,
+  backlogged, wishlisted), coloured spans for how long each status lasted, and zoom. Every status change is recorded
+  with its date; past dates can be corrected or removed on the game's page.
 - **Library page** with stats, status tabs, filtering and sorting.
 - **Export / import** the library as JSON (backup, or move between browsers). Importing merges: for games you
   already have, the most recently updated copy wins, so it never overwrites newer local edits. Invalid records

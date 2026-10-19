@@ -10,8 +10,16 @@ export interface GameRef {
   genres: string[]
 }
 
+/** One status change: the status a game moved to and when. */
+export interface StatusChange {
+  status: LibraryStatus
+  at: string
+}
+
 export interface LibraryEntry extends GameRef {
   status: LibraryStatus
+  /** Every status the game has had, oldest first. The last item matches `status`. */
+  history: StatusChange[]
   /** Personal rating, 1-5, or null when unrated. */
   rating: number | null
   hoursPlayed: number

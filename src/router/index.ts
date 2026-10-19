@@ -7,6 +7,7 @@ const router = createRouter({
     { path: '/games', name: 'games', component: () => import('@/views/BrowseView.vue') },
     { path: '/games/:id(\\d+)', name: 'game', component: () => import('@/views/GameDetailView.vue'), props: true },
     { path: '/library', name: 'library', component: () => import('@/views/LibraryView.vue') },
+    { path: '/timeline', name: 'timeline', component: () => import('@/views/TimelineView.vue') },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/views/NotFoundView.vue') },
   ],
   scrollBehavior(to, from, saved) {
