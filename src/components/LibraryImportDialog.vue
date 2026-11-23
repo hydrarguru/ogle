@@ -85,7 +85,7 @@ function submit() {
   <dialog
     ref="dialog"
     aria-labelledby="import-title"
-    class="m-auto max-h-[92vh] w-[min(62rem,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl border border-border bg-surface p-0 text-slate-100 backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+    class="m-auto max-h-[92vh] w-[min(62rem,calc(100vw-1.5rem))] overflow-y-auto rounded-xl border border-border bg-surface p-0 text-slate-100 backdrop:bg-black/70"
     @click.self="close"
     @close="reset"
   >
@@ -116,7 +116,7 @@ function submit() {
             <button type="button" class="shrink-0 text-xs text-muted hover:text-white" @click="reset">Remove</button>
           </div>
           <div v-else>
-            <label for="import-text" class="mb-1 block text-xs font-semibold tracking-wide text-muted uppercase">
+            <label for="import-text" class="mb-1 block label">
               Or paste JSON
             </label>
             <textarea

@@ -34,31 +34,19 @@ function search() {
 
 <template>
   <div>
-    <section class="relative overflow-hidden border-b border-border">
-      <div
-        class="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(255,213,128,0.16),transparent)]"
-        aria-hidden="true"
-      />
-      <div class="relative mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-20 text-center sm:py-28">
-        <h1 class="text-4xl font-extrabold tracking-tight text-balance sm:text-6xl">
-          Every game you play, <span class="text-accent">in one place</span>.
-        </h1>
-        <p class="max-w-xl text-lg text-muted">
-          Discover games from a library of 500,000+ titles, then track what you're playing, what's next, and what you thought.
-        </p>
-        <div class="w-full max-w-xl"><SearchField v-model="query" large placeholder="Search for a game…" @submit="search" /></div>
-        <div class="flex gap-3">
-          <RouterLink to="/games" class="btn btn-primary">Browse games</RouterLink>
-          <RouterLink to="/library" class="btn">My library</RouterLink>
-        </div>
+    <section class="mx-auto max-w-7xl px-4 pt-8 sm:px-6">
+      <h1 class="sr-only">Home</h1>
+      <div class="max-w-xl">
+        <SearchField v-model="query" large placeholder="Search for a game…" @submit="search" />
+        <p class="mt-2 text-sm text-muted">Search 500,000+ games, then add them to your library.</p>
       </div>
     </section>
 
-    <div class="mx-auto max-w-7xl space-y-14 px-4 py-12 sm:px-6">
+    <div class="mx-auto max-w-7xl space-y-12 px-4 py-10 sm:px-6">
       <section v-if="playing.length" aria-labelledby="playing-heading">
         <div class="mb-5 flex items-end justify-between">
-          <h2 id="playing-heading" class="text-2xl font-bold">Continue playing</h2>
-          <RouterLink to="/library?status=playing" class="text-sm text-accent hover:underline">View all</RouterLink>
+          <h2 id="playing-heading" class="text-xl font-semibold">Continue playing</h2>
+          <RouterLink to="/library?status=playing" class="text-sm text-accent hover:underline">See all</RouterLink>
         </div>
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <GameCard v-for="entry in playing" :key="entry.id" :game="entry" />
@@ -70,8 +58,8 @@ function search() {
         { id: 'top', title: 'Critically acclaimed', source: topRated, to: '/games?ordering=-metacritic' },
       ]" :key="row.id" :aria-labelledby="`${row.id}-heading`">
         <div class="mb-5 flex items-end justify-between">
-          <h2 :id="`${row.id}-heading`" class="text-2xl font-bold">{{ row.title }}</h2>
-          <RouterLink :to="row.to" class="text-sm text-accent hover:underline">See more</RouterLink>
+          <h2 :id="`${row.id}-heading`" class="text-xl font-semibold">{{ row.title }}</h2>
+          <RouterLink :to="row.to" class="text-sm text-accent hover:underline">See all</RouterLink>
         </div>
         <StateMessage
           v-if="row.source.error.value"

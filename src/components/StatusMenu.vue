@@ -44,11 +44,11 @@ async function remove() {
   <div ref="root" class="relative">
     <button
       type="button"
-      class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold backdrop-blur transition"
+      class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition"
       :class="
         entry
           ? [STATUS_META[entry.status].badge, 'border-transparent shadow-[inset_0_0_0_999px_rgb(11_13_18/0.85)]']
-          : 'border-white/20 bg-black/60 text-white hover:bg-black/80'
+          : 'border-white/20 bg-black/80 text-white hover:bg-black/90'
       "
       aria-haspopup="menu"
       :aria-expanded="open"

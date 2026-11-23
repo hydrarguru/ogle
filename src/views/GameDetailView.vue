@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/16/solid'
+import { StarIcon } from '@heroicons/vue/20/solid'
 import LibraryPanel from '@/components/LibraryPanel.vue'
 import StateMessage from '@/components/StateMessage.vue'
 import { getGame, getScreenshots } from '@/api/rawg'
@@ -46,34 +47,33 @@ const details = computed(() => {
       </StateMessage>
 
       <div v-else-if="!game.data.value" class="animate-pulse space-y-6" aria-busy="true" aria-label="Loading game">
-        <div class="aspect-21/9 rounded-2xl bg-surface" />
+        <div class="aspect-21/9 rounded-xl bg-surface" />
         <div class="h-8 w-1/2 rounded bg-surface" />
       </div>
 
       <template v-else>
-        <div class="relative mb-8 overflow-hidden rounded-3xl border border-border">
+        <div class="mb-8">
           <img
             v-if="game.data.value.background_image"
             :src="resizeImage(game.data.value.background_image, 1280)!"
             :alt="`${game.data.value.name} artwork`"
-            class="aspect-21/9 min-h-64 w-full object-cover"
+            class="aspect-21/9 min-h-64 w-full rounded-xl object-cover"
           />
-          <div v-else class="aspect-21/9 min-h-64 bg-surface" />
-          <div class="absolute inset-0 bg-linear-to-t from-bg via-bg/50 to-transparent" aria-hidden="true" />
-          <div class="absolute inset-x-0 bottom-0 p-5 sm:p-8">
-            <h1 class="text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{{ game.data.value.name }}</h1>
-            <div class="mt-3 flex flex-wrap items-center gap-2 text-sm">
-              <span
-                v-if="game.data.value.metacritic"
-                class="rounded-md border border-status-completed/60 px-2 py-0.5 font-bold text-status-completed"
-                title="Metacritic score"
-              >
-                {{ game.data.value.metacritic }}
-              </span>
-              <span class="text-accent">★ {{ game.data.value.rating.toFixed(2) }}</span>
-              <span class="text-muted">({{ game.data.value.ratings_count.toLocaleString() }} ratings)</span>
-              <span v-for="p in platforms" :key="p" class="rounded-full bg-white/10 px-2.5 py-0.5 text-xs">{{ p }}</span>
-            </div>
+          <div v-else class="aspect-21/9 min-h-64 rounded-xl bg-surface" />
+          <h1 class="mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ game.data.value.name }}</h1>
+          <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <span
+              v-if="game.data.value.metacritic"
+              class="rounded-md border border-status-completed/60 px-2 py-0.5 font-bold text-status-completed"
+              title="Metacritic score"
+            >
+              {{ game.data.value.metacritic }}
+            </span>
+            <span class="inline-flex items-center gap-1 text-accent">
+              <StarIcon class="size-4" aria-hidden="true" />{{ game.data.value.rating.toFixed(2) }}
+            </span>
+            <span class="text-muted">({{ game.data.value.ratings_count.toLocaleString() }} ratings)</span>
+            <span v-if="platforms.length" class="text-muted">{{ platforms.join(', ') }}</span>
           </div>
         </div>
 
@@ -111,7 +111,7 @@ const details = computed(() => {
               <h2 id="details-heading" class="mb-3 text-xl font-bold">Details</h2>
               <dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2">
                 <div v-for="[label, value] in details" :key="label">
-                  <dt class="text-xs font-semibold tracking-wide text-muted uppercase">{{ label }}</dt>
+                  <dt class="label">{{ label }}</dt>
                   <dd class="mt-0.5">{{ value }}</dd>
                 </div>
               </dl>

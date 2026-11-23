@@ -43,7 +43,7 @@ async function copy() {
     </div>
 
     <div>
-      <h4 class="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">Fields of each entry</h4>
+      <h4 class="mb-2 label">Fields of each entry</h4>
       <dl class="divide-y divide-border rounded-xl border border-border text-xs">
         <div v-for="field in FORMAT_FIELDS" :key="field.name" class="grid grid-cols-[7.5rem_1fr] gap-x-3 gap-y-0.5 px-3 py-2">
           <dt class="font-mono text-slate-200">

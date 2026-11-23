@@ -12,7 +12,7 @@ defineProps<{ games?: GameSummary[]; loading?: boolean; skeletons?: number }>()
       <div
         v-for="n in skeletons ?? 8"
         :key="n"
-        class="animate-pulse overflow-hidden rounded-2xl border border-border bg-surface"
+        class="animate-pulse overflow-hidden rounded-xl border border-border bg-surface"
         aria-hidden="true"
       >
         <div class="aspect-16/10 bg-surface-2" />

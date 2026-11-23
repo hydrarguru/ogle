@@ -27,7 +27,7 @@ const changes = computed(() => library.list.reduce((sum, e) => sum + e.history.l
 <template>
   <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
     <div class="mb-6">
-      <h1 class="text-3xl font-extrabold tracking-tight">Timeline</h1>
+      <h1 class="text-3xl font-semibold tracking-tight">Timeline</h1>
       <p class="mt-1 text-sm text-muted">
         When you started, finished, dropped or shelved each game. Fix a date from the game's page.
       </p>
