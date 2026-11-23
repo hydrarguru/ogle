@@ -78,7 +78,7 @@ function goToPage(next: number) {
 
 <template>
   <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-    <h1 class="mb-6 text-3xl font-extrabold tracking-tight">{{ q ? `Results for “${q}”` : 'Browse games' }}</h1>
+    <h1 class="mb-6 text-3xl font-semibold tracking-tight">{{ q ? `Results for “${q}”` : 'Browse games' }}</h1>
 
     <div class="mb-8 grid gap-3 sm:grid-cols-[1fr_12rem_12rem]">
       <SearchField v-model="searchText" placeholder="Search games…" />

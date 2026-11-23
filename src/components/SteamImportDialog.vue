@@ -106,7 +106,7 @@ function submit() {
   <dialog
     ref="dialog"
     aria-labelledby="steam-title"
-    class="m-auto max-h-[92vh] w-[min(36rem,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl border border-border bg-surface p-0 text-slate-100 backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+    class="m-auto max-h-[92vh] w-[min(36rem,calc(100vw-1.5rem))] overflow-y-auto rounded-xl border border-border bg-surface p-0 text-slate-100 backdrop:bg-black/70"
     @click.self="close"
     @close="reset"
   >
@@ -125,7 +125,7 @@ function submit() {
       </div>
 
       <div>
-        <label for="steam-profile" class="mb-1 block text-xs font-semibold tracking-wide text-muted uppercase">Profile link</label>
+        <label for="steam-profile" class="mb-1 block label">Profile link</label>
         <input
           id="steam-profile"
           v-model="profile"

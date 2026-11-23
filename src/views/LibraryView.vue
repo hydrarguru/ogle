@@ -12,6 +12,7 @@ import { useLibraryStore } from '@/stores/library'
 import { LIBRARY_STATUSES, type LibraryEntry, type LibraryStatus } from '@/types/library'
 import { formatHours } from '@/utils/game'
 import { ref } from 'vue'
+import { StarIcon } from '@heroicons/vue/20/solid'
 
 usePageTitle('My library')
 
@@ -52,14 +53,14 @@ const stats = computed(() => [
   { label: 'Playing', value: String(library.stats.playing) },
   { label: 'Completed', value: String(library.stats.completed) },
   { label: 'Hours played', value: formatHours(library.stats.hours) },
-  { label: 'Avg. rating', value: library.stats.averageRating ? `${library.stats.averageRating.toFixed(1)} ★` : '—' },
+  { label: 'Avg. rating', value: library.stats.averageRating ? library.stats.averageRating.toFixed(1) : '—', star: !!library.stats.averageRating },
 ])
 </script>
 
 <template>
   <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
     <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
-      <h1 class="text-3xl font-extrabold tracking-tight">My library</h1>
+      <h1 class="text-3xl font-semibold tracking-tight">My library</h1>
       <LibraryTransfer :can-export="library.count > 0" />
     </div>
 
@@ -77,10 +78,12 @@ const stats = computed(() => [
 
 
     <template v-else>
-      <dl class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <div v-for="s in stats" :key="s.label" class="rounded-2xl border border-border bg-surface px-4 py-3">
-          <dt class="text-xs font-semibold tracking-wide text-muted uppercase">{{ s.label }}</dt>
-          <dd class="mt-1 text-2xl font-bold">{{ s.value }}</dd>
+      <dl class="mb-8 grid grid-cols-2 gap-y-4 sm:grid-cols-3 lg:grid-cols-5 lg:divide-x lg:divide-border">
+        <div v-for="s in stats" :key="s.label" class="lg:px-5 lg:first:pl-0">
+          <dt class="label">{{ s.label }}</dt>
+          <dd class="mt-1 flex items-center gap-1 text-2xl font-semibold">
+            {{ s.value }}<StarIcon v-if="s.star" class="size-5 text-accent" aria-hidden="true" />
+          </dd>
         </div>
       </dl>
 

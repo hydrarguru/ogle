@@ -4,7 +4,7 @@ defineProps<{ title: string; description?: string; tone?: 'neutral' | 'error' }>
 
 <template>
   <div
-    class="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-16 text-center"
+    class="flex flex-col items-center gap-3 rounded-xl border border-dashed px-6 py-16 text-center"
     :class="tone === 'error' ? 'border-status-dropped/50 bg-status-dropped/5' : 'border-border bg-surface/50'"
     :role="tone === 'error' ? 'alert' : undefined"
   >

@@ -73,7 +73,7 @@ const addedOn = computed(() =>
 </script>
 
 <template>
-  <section class="space-y-5 rounded-2xl border border-border bg-surface p-5" aria-labelledby="library-heading">
+  <section class="space-y-5 rounded-xl bg-surface p-5" aria-labelledby="library-heading">
     <div>
       <h2 id="library-heading" class="text-lg font-bold">{{ entry ? 'In your library' : 'Add to your library' }}</h2>
       <p v-if="entry" class="text-xs text-muted">Added {{ addedOn }}</p>
@@ -84,7 +84,7 @@ const addedOn = computed(() =>
     </p>
 
     <div>
-      <p class="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">Status</p>
+      <p class="mb-2 label">Status</p>
       <div class="flex flex-wrap gap-2" role="group" aria-label="Status">
         <button
           v-for="status in LIBRARY_STATUSES"
@@ -107,7 +107,7 @@ const addedOn = computed(() =>
 
     <template v-if="entry">
       <div>
-        <p class="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">History</p>
+        <p class="mb-2 label">History</p>
         <ol class="space-y-1.5" aria-label="Status history">
           <li v-for="change in history" :key="change.index" class="flex items-center gap-2 text-sm">
             <span class="size-2 shrink-0 rounded-full" :class="STATUS_META[change.status].dot" aria-hidden="true" />
@@ -136,12 +136,12 @@ const addedOn = computed(() =>
       </div>
 
       <div>
-        <p class="mb-1 text-xs font-semibold tracking-wide text-muted uppercase">Your rating</p>
+        <p class="mb-1 label">Your rating</p>
         <StarRating :model-value="entry.rating" @update:model-value="library.update(game.id, { rating: $event })" />
       </div>
 
       <div>
-        <label for="hours" class="mb-1 block text-xs font-semibold tracking-wide text-muted uppercase">
+        <label for="hours" class="mb-1 block label">
           Hours played
         </label>
         <input
@@ -158,7 +158,7 @@ const addedOn = computed(() =>
       </div>
 
       <div>
-        <label for="notes" class="mb-1 block text-xs font-semibold tracking-wide text-muted uppercase">Notes</label>
+        <label for="notes" class="mb-1 block label">Notes</label>
         <textarea
           id="notes"
           v-model="notes"

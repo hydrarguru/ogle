@@ -45,7 +45,7 @@ const describe = (entry: LibraryEntry, mark: TimelineMark) => `${entry.name}: ${
 </script>
 
 <template>
-  <div class="flex overflow-hidden rounded-2xl border border-border bg-surface">
+  <div class="flex overflow-hidden rounded-xl border border-border bg-surface">
     <!-- Game names stay put while the timeline scrolls sideways. -->
     <ul class="w-36 shrink-0 border-r border-border sm:w-52" aria-label="Games">
       <li class="h-9 border-b border-border" aria-hidden="true" />

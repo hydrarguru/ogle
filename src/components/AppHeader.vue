@@ -19,7 +19,7 @@ const linkClass = 'rounded-lg px-3 py-2 text-sm font-medium text-muted transitio
 <template>
   <header class="sticky top-0 z-40 border-b border-border bg-bg/85 backdrop-blur">
     <div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
-      <RouterLink to="/" class="flex items-center gap-2 text-xl font-extrabold tracking-tight">
+      <RouterLink to="/" class="flex items-center gap-2 text-xl font-semibold tracking-tight">
         <span class="inline-block size-6 rounded-full border-[5px] border-accent" aria-hidden="true" />
         ogle
       </RouterLink>
@@ -30,7 +30,7 @@ const linkClass = 'rounded-lg px-3 py-2 text-sm font-medium text-muted transitio
           Library
           <span
             v-if="library.count"
-            class="ml-1 rounded-full bg-accent px-1.5 py-0.5 text-xs font-bold text-bg"
+            class="ml-1 text-xs text-muted"
             :aria-label="`${library.count} games`"
           >
             {{ library.count }}

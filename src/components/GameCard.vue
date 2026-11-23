@@ -13,9 +13,9 @@ const subtitle = computed(() => [releaseYear(props.game.released), props.game.ge
 
 <template>
   <article
-    class="group relative flex flex-col rounded-2xl border border-border bg-surface transition hover:-translate-y-0.5 hover:border-muted"
+    class="group relative flex flex-col rounded-xl border border-transparent bg-surface transition hover:border-muted"
   >
-    <RouterLink :to="{ name: 'game', params: { id: game.id } }" class="block overflow-hidden rounded-t-2xl">
+    <RouterLink :to="{ name: 'game', params: { id: game.id } }" class="block overflow-hidden rounded-t-xl">
       <div class="aspect-16/10 bg-surface-2">
         <img
           v-if="image"
@@ -33,7 +33,7 @@ const subtitle = computed(() => [releaseYear(props.game.released), props.game.ge
     </div>
     <span
       v-if="metacritic"
-      class="absolute top-2.5 left-2.5 rounded-md border border-status-completed/60 bg-black/70 px-1.5 py-0.5 text-xs font-bold text-status-completed backdrop-blur"
+      class="absolute top-2.5 left-2.5 rounded-md border border-status-completed/60 bg-black/80 px-1.5 py-0.5 text-xs font-bold text-status-completed"
       title="Metacritic score"
     >
       {{ metacritic }}
